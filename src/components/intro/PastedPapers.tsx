@@ -50,11 +50,11 @@ export function PastedPapers({ reduced, onClosed, onComplete }: PastedPapersProp
       <motion.div
         className="intro-shutter__panel intro-shutter__panel--top"
         style={{ backgroundImage: `url(${paperBg})` }}
-        initial={{ y: "-100%", rotate: -2.6 }}
+        initial={{ y: "-100%", rotate: -2.6, z: 0 }}
         animate={
           stage === "closing"
-            ? { y: ["-100%", "3%", "0%"], rotate: [-2.6, 0.6, -0.3] }
-            : { y: ["0%", "-101%"], rotate: [-0.3, -1.8] }
+            ? { y: ["-100%", "3%", "0%"], rotate: [-2.6, 0.6, -0.3], z: 0 }
+            : { y: ["0%", "-101%"], rotate: [-0.3, -1.8], z: 0 }
         }
         transition={stage === "closing" ? CLOSE_TRANSITION : OPEN_TRANSITION}
         onAnimationComplete={() => {
@@ -64,11 +64,11 @@ export function PastedPapers({ reduced, onClosed, onComplete }: PastedPapersProp
       <motion.div
         className="intro-shutter__panel intro-shutter__panel--bottom"
         style={{ backgroundImage: `url(${paperBg})` }}
-        initial={{ y: "100%", rotate: 2.2 }}
+        initial={{ y: "100%", rotate: 2.2, z: 0 }}
         animate={
           stage === "closing"
-            ? { y: ["100%", "-3%", "0%"], rotate: [2.2, -0.5, 0.3] }
-            : { y: ["0%", "101%"], rotate: [0.3, 1.6] }
+            ? { y: ["100%", "-3%", "0%"], rotate: [2.2, -0.5, 0.3], z: 0 }
+            : { y: ["0%", "101%"], rotate: [0.3, 1.6], z: 0 }
         }
         transition={stage === "closing" ? CLOSE_TRANSITION : OPEN_TRANSITION}
       />

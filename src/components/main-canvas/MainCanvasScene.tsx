@@ -1,3 +1,4 @@
+import { motion } from "motion/react";
 import {
   stopTitles,
   scribbleDoodles,
@@ -23,6 +24,7 @@ import {
   headline,
   aboutBlock,
   connectorFragments,
+  TRANSITION_FRAGMENT_INDICES,
   backgroundTexture,
   paperTexture,
   MAIN_CANVAS_WIDTH,
@@ -32,15 +34,41 @@ import scribbleDoodleSrc from "../../assets/main-canvas/scribble-doodle.png";
 import handCutoutSrc from "../../assets/main-canvas/hand-cutout.png";
 import { PolaroidCard } from "./PolaroidCard";
 import { CornerBracket } from "./CornerBracket";
+import { Typewriter } from "../Typewriter";
 
 const FRAME_FILTER = "brightness(92%) contrast(77%) saturate(25%)";
+// same grey<->color language as PhotoFrame's existing active/inactive treatment
+const PHOTO_COLOR = "grayscale(0) saturate(1.05) contrast(1.02)";
+const PHOTO_GREY = "grayscale(1) saturate(0.15) contrast(0.98)";
+const PHOTO_FILTER_TRANSITION = "filter 0.55s var(--ease-editorial)";
+const DRAW_DURATION_S = 1.3;
+
+interface MainCanvasSceneProps {
+  reduced: boolean;
+  /** stop index (0-3) whose hero is in full color and other stops stay grey; null = none revealed yet */
+  revealedStops: boolean[];
+  /** stop index currently typing its caption; already-revealed stops show their full caption statically */
+  captionStopIndex: number | null;
+  /** connectorFragments array-index currently mid draw-in animation */
+  drawingFragment: number | null;
+  /** connectorFragments array-index that have finished drawing and now render statically */
+  drawnFragments: boolean[];
+  onFollowJourney: () => void;
+}
 
 /** Pixel-exact port of the Paper "Main Canvas" artboard. Every element below is
  * positioned via the literal x/y read from Paper — this component itself does
  * not pan or zoom; it is meant to be mounted once inside the single transformed
  * world container so pan/zoom stays a transform on that container, never a
  * per-element recomputation. */
-export function MainCanvasScene() {
+export function MainCanvasScene({
+  reduced,
+  revealedStops,
+  captionStopIndex,
+  drawingFragment,
+  drawnFragments,
+  onFollowJourney,
+}: MainCanvasSceneProps) {
   return (
     <div style={{ position: "absolute", left: 0, top: 0, width: MAIN_CANVAS_WIDTH, height: MAIN_CANVAS_HEIGHT }}>
       <div
@@ -100,7 +128,17 @@ export function MainCanvasScene() {
       {polaroidsLarge.map((p, i) => (
         <PolaroidCard key={i} x={p.x} y={p.y} width={POLAROID_LARGE_W} height={POLAROID_LARGE_H} frameFilter={FRAME_FILTER}>
           <div style={{ position: "absolute", left: 26.52, top: 27.74, width: 294.8, height: 364.04, overflow: "clip" }}>
-            <img src={heroInstagram} alt="" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+            <img
+              src={heroInstagram}
+              alt=""
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "contain",
+                filter: revealedStops[i] ? PHOTO_COLOR : PHOTO_GREY,
+                transition: PHOTO_FILTER_TRANSITION,
+              }}
+            />
           </div>
         </PolaroidCard>
       ))}
@@ -108,8 +146,8 @@ export function MainCanvasScene() {
       {polaroidsSplit.map((p, i) => (
         <PolaroidCard key={i} x={p.x} y={p.y} width={POLAROID_SMALL_W} height={POLAROID_SMALL_H} frameFilter={FRAME_FILTER}>
           <div style={{ position: "absolute", left: 13.63, top: 15.81, width: 174.98, height: 220.16, overflow: "clip" }}>
-            <img src={splitTop} alt="" style={{ position: "absolute", left: 0, top: 0, width: "100%", height: "50%", objectFit: "cover" }} />
-            <img src={splitBottom} alt="" style={{ position: "absolute", left: 0, top: "50%", width: "100%", height: "50%", objectFit: "cover" }} />
+            <img src={splitTop} alt="" style={{ position: "absolute", left: 0, top: 0, width: "100%", height: "50%", objectFit: "cover", filter: PHOTO_GREY }} />
+            <img src={splitBottom} alt="" style={{ position: "absolute", left: 0, top: "50%", width: "100%", height: "50%", objectFit: "cover", filter: PHOTO_GREY }} />
           </div>
         </PolaroidCard>
       ))}
@@ -117,7 +155,7 @@ export function MainCanvasScene() {
       {polaroidsC.map((p, i) => (
         <PolaroidCard key={i} x={p.x} y={p.y} width={POLAROID_SMALL_W} height={POLAROID_SMALL_H} frameFilter={FRAME_FILTER}>
           <div style={{ position: "absolute", left: 13.57, top: 15.8, width: 175.26, height: 216.24, background: "#DFD9DB", overflow: "clip" }}>
-            <img src={photoC} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            <img src={photoC} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", filter: PHOTO_GREY }} />
           </div>
         </PolaroidCard>
       ))}
@@ -125,7 +163,7 @@ export function MainCanvasScene() {
       {polaroidsD.map((p, i) => (
         <PolaroidCard key={i} x={p.x} y={p.y} width={POLAROID_SMALL_W} height={POLAROID_SMALL_H} frameFilter={FRAME_FILTER}>
           <div style={{ position: "absolute", left: 13.6, top: 15.85, width: 175.03, height: 216.14, overflow: "clip" }}>
-            <img src={photoD} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            <img src={photoD} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", filter: PHOTO_GREY }} />
           </div>
         </PolaroidCard>
       ))}
@@ -133,31 +171,36 @@ export function MainCanvasScene() {
       {polaroidsE.map((p, i) => (
         <PolaroidCard key={i} x={p.x} y={p.y} width={POLAROID_SMALL_W} height={POLAROID_SMALL_H} frameFilter={FRAME_FILTER}>
           <div style={{ position: "absolute", left: 13.6, top: 15.85, width: 175.03, height: 216.14, overflow: "clip" }}>
-            <img src={photoE} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            <img src={photoE} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", filter: PHOTO_GREY }} />
           </div>
         </PolaroidCard>
       ))}
 
-      {contentBlocks.map((b) => {
+      {contentBlocks.map((b, i) => {
         const blOverrideY = CONTENT_BLOCK_BL_OVERRIDE[b.id];
+        const revealed = revealedStops[i];
+        const textStyle: React.CSSProperties = {
+          position: "absolute",
+          left: 23.5,
+          top: 20.14,
+          width: 298.91,
+          color: "#900000",
+          fontFamily: '"Satoshi", system-ui, sans-serif',
+          fontWeight: 500,
+          fontSize: 18.6,
+          lineHeight: "24px",
+          whiteSpace: "pre-wrap",
+        };
         return (
           <div key={b.id} style={{ position: "absolute", left: b.x, top: b.y, width: b.width, height: b.height }}>
-            <div
-              style={{
-                position: "absolute",
-                left: 23.5,
-                top: 20.14,
-                width: 298.91,
-                color: "#900000",
-                fontFamily: '"Satoshi", system-ui, sans-serif',
-                fontWeight: 500,
-                fontSize: 18.6,
-                lineHeight: "24px",
-                whiteSpace: "pre-wrap",
-              }}
-            >
-              {b.text}
-            </div>
+            {revealed &&
+              (i === captionStopIndex ? (
+                <div style={textStyle}>
+                  <Typewriter text={b.text} reduced={reduced} />
+                </div>
+              ) : (
+                <div style={textStyle}>{b.text}</div>
+              ))}
             <CornerBracket corner="tr" x={b.width - 23.57} y={0} />
             <CornerBracket corner="br" x={b.width - 23.57} y={b.height - 20.142} />
             <CornerBracket corner="tl" x={23.57} y={20.14} />
@@ -220,9 +263,9 @@ export function MainCanvasScene() {
             </div>
           </div>
         </div>
-        <div style={{ color: "#CB0000", fontFamily: '"Satoshi", system-ui, sans-serif', fontWeight: 500, fontSize: 32, lineHeight: "40px" }}>
-          Follow My Journey
-        </div>
+        <button type="button" className="main-canvas-journey-cta" onClick={onFollowJourney}>
+          Follow My Journey <span className="main-canvas-journey-cta__arrow" aria-hidden="true">→</span>
+        </button>
       </div>
 
       {/* bottom-left about block */}
@@ -247,33 +290,57 @@ export function MainCanvasScene() {
       </div>
 
       {/* connector doodle — routed on top, matching Paper's stacking order.
-          4 separate rotated fragments, per Paper's current state. */}
-      {connectorFragments.map((f, i) => (
-        <svg
-          key={i}
-          width={f.width}
-          height={f.height}
-          viewBox={f.viewBox}
-          style={{
-            position: "absolute",
-            left: f.left,
-            top: f.top,
-            overflow: "visible",
-            transformOrigin: "0% 0%",
-            transform: f.rotate ? `rotate(${f.rotate}deg)` : undefined,
-          }}
-        >
-          <path
-            d={f.d}
-            fill="none"
-            stroke="#161412"
-            strokeWidth={2.5}
-            strokeLinecap="round"
-            strokeDasharray="1 7"
-            opacity={0.78}
-          />
-        </svg>
-      ))}
+          Fragment 1 is a static isolated mark; fragments 0/2/3 sit between two
+          stops and only draw themselves in once the guided story reaches that
+          transition (see TRANSITION_FRAGMENT_INDICES). */}
+      {connectorFragments.map((f, i) => {
+        const isTransition = TRANSITION_FRAGMENT_INDICES.includes(i);
+        const drawn = !isTransition || drawnFragments[i];
+        const drawingNow = isTransition && drawingFragment === i;
+
+        if (!drawn && !drawingNow) return null;
+
+        return (
+          <svg
+            key={i}
+            width={f.width}
+            height={f.height}
+            viewBox={f.viewBox}
+            style={{
+              position: "absolute",
+              left: f.left,
+              top: f.top,
+              overflow: "visible",
+              transformOrigin: "0% 0%",
+              transform: f.rotate ? `rotate(${f.rotate}deg)` : undefined,
+            }}
+          >
+            {drawn ? (
+              <path
+                d={f.d}
+                fill="none"
+                stroke="#161412"
+                strokeWidth={2.5}
+                strokeLinecap="round"
+                strokeDasharray="1 7"
+                opacity={0.78}
+              />
+            ) : (
+              <motion.path
+                d={f.d}
+                fill="none"
+                stroke="#161412"
+                strokeWidth={2.5}
+                strokeLinecap="round"
+                opacity={0.78}
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{ duration: reduced ? 0.2 : DRAW_DURATION_S, ease: "linear" }}
+              />
+            )}
+          </svg>
+        );
+      })}
     </div>
   );
 }

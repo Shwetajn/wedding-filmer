@@ -2,16 +2,18 @@ import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { chapters } from "../data/chapters";
 import { WORLD_HEIGHT, WORLD_WIDTH } from "../data/world";
+import { headline } from "../data/mainCanvasLayout";
 import { useCanvasEngine } from "../hooks/useCanvasEngine";
-import { useJourney } from "../hooks/useJourney";
+import { useGuidedStory } from "../hooks/useGuidedStory";
 import { FinalChapter } from "./FinalChapter";
 import { CanvasControls } from "./CanvasControls";
 import { JourneyPill } from "./JourneyPill";
 import { MainCanvasScene } from "./main-canvas/MainCanvasScene";
 
-const ENTRY_POINT = chapters[0].position;
-const STOP1_SCALE = 0.62;
-const ENTRY_SCALE = 1.7;
+// the resting pose: centered on the "HI THERE, I AM SHWETA JAIN / Follow My
+// Journey" block, framed prominently — not the full zoomed-out overview
+const ENTRY_POINT = { x: headline.x + headline.width / 2, y: headline.y + headline.height / 2 };
+const ENTRY_SCALE = 1;
 
 export function CanvasWorld() {
   const prefersReducedMotion = Boolean(useReducedMotion());
@@ -21,19 +23,18 @@ export function CanvasWorld() {
   const [zoomedOut, setZoomedOut] = useState(false);
   const [showHint, setShowHint] = useState(true);
 
-  const journey = useJourney({ chapters, focusOn, setJourneyStopper, reduced: prefersReducedMotion });
+  const guidedStory = useGuidedStory({ focusOn, setJourneyStopper, reduced: prefersReducedMotion });
 
   useEffect(() => {
-    // resting pose the guided pan starts from — already framing stop 1, just tighter
+    // land directly on the centered headline — the paper opening is the only
+    // motion into this view, the guided story only starts on explicit request
     const el = containerRef.current;
     const vw = el?.clientWidth ?? window.innerWidth;
     const vh = el?.clientHeight ?? window.innerHeight;
-    const initialScale = prefersReducedMotion ? STOP1_SCALE : ENTRY_SCALE;
-    scale.set(initialScale);
-    x.set(vw / 2 - ENTRY_POINT.x * initialScale);
-    y.set(vh / 2 - ENTRY_POINT.y * initialScale);
+    scale.set(ENTRY_SCALE);
+    x.set(vw / 2 - ENTRY_POINT.x * ENTRY_SCALE);
+    y.set(vh / 2 - ENTRY_POINT.y * ENTRY_SCALE);
     setZoomedOut(true);
-    journey.start();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -73,15 +74,22 @@ export function CanvasWorld() {
           transition={{ duration: 1.4 }}
           style={{ pointerEvents: zoomedOut ? "auto" : "none" }}
         >
-          <MainCanvasScene />
+          <MainCanvasScene
+            reduced={prefersReducedMotion}
+            revealedStops={guidedStory.revealedStops}
+            captionStopIndex={guidedStory.captionStopIndex}
+            drawingFragment={guidedStory.drawingFragment}
+            drawnFragments={guidedStory.drawnFragments}
+            onFollowJourney={() => guidedStory.start()}
+          />
           <FinalChapter chapter={chapters[4]} />
         </motion.div>
       </motion.div>
 
-      {zoomedOut && <CanvasControls scale={scale} showHint={showHint} onReplayJourney={() => journey.start()} />}
+      {zoomedOut && <CanvasControls scale={scale} showHint={showHint} onReplayJourney={() => guidedStory.start()} />}
 
-      {journey.isRunning && <JourneyPill mode="end" onClick={() => journey.stop()} />}
-      {journey.canResume && <JourneyPill mode="continue" onClick={() => journey.resume()} />}
+      {guidedStory.isRunning && <JourneyPill mode="end" onClick={() => guidedStory.stop()} />}
+      {guidedStory.canResume && <JourneyPill mode="continue" onClick={() => guidedStory.resume()} />}
     </div>
   );
 }

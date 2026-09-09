@@ -205,6 +205,7 @@ export const headline = {
   x: 2076,
   y: 1322,
   width: 922,
+  height: 506,
 };
 
 export const aboutBlock = {
@@ -272,3 +273,10 @@ export const connectorFragments: ConnectorFragment[] = [
     d: "M90.393 1168.946C232.877 1100.756 304.12 1259.865 470.35 1055.297C589.088 918.919 494.1 805.27 660.331 737.08C802.814 680.256 755.32 555.243 921.551 521.148C1099.658 487.054 1016.54 373.406 1218.393 327.946",
   },
 ];
+
+/** connectorFragments[N] that visually runs between stop (i+1) and stop (i+2)
+ * — e.g. TRANSITION_FRAGMENT_INDICES[0] is the 01->02 segment. Fragment 1 (ND)
+ * doesn't sit between any two stops (it's an isolated mark near stop 04) so
+ * it's never part of the guided draw-in sequence — it renders statically from
+ * the start instead. */
+export const TRANSITION_FRAGMENT_INDICES = [0, 2, 3];

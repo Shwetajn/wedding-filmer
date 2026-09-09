@@ -9,7 +9,6 @@ import type { IntroPhase } from "./phases";
 import paperBg from "../../assets/intro/paper-bg.png";
 import cameraImg from "../../assets/intro/camera.png";
 import redScrap from "../../assets/intro/red-scrap.png";
-import mainCanvasBg from "../../assets/intro/main-canvas.png";
 
 interface IntroSequenceProps {
   /** fired once the two paper sheets have appeared — safe to mount what's next underneath */
@@ -62,15 +61,6 @@ export function IntroSequence({ onCovered, onComplete }: IntroSequenceProps) {
     return () => {
       cancelled = true;
     };
-  }, []);
-
-  useEffect(() => {
-    // Warm the main-canvas background in the background as soon as the intro
-    // mounts. It isn't needed until the papers open several seconds later, so
-    // this never blocks anything — it just means the image is already
-    // decoded by the time it's revealed, instead of the browser decoding it
-    // for the first time exactly when the paper is mid-animation.
-    preload(mainCanvasBg);
   }, []);
 
   useEffect(() => {

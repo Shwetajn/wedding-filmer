@@ -1,0 +1,40 @@
+.main-canvas-journey-cta {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #cb0000;
+  font-family: "Satoshi", system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 32px;
+  line-height: 40px;
+  position: relative;
+}
+.main-canvas-journey-cta::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 34px;
+  bottom: 4px;
+  height: 2px;
+  background: #cb0000;
+  opacity: 0.6;
+  transition: background 0.2s ease, opacity 0.2s ease;
+}
+.main-canvas-journey-cta__arrow {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+.main-canvas-journey-cta:hover {
+  color: #7a0000;
+}
+.main-canvas-journey-cta:hover::after {
+  background: #7a0000;
+  opacity: 0.85;
+}
+.main-canvas-journey-cta:hover .main-canvas-journey-cta__arrow {
+  transform: translateX(6px);
+}

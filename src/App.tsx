@@ -1,21 +1,18 @@
 import { useState } from "react";
 import { IntroSequence } from "./components/intro/IntroSequence";
-import { FirstCanvas } from "./components/intro/FirstCanvas";
 import { CanvasWorld } from "./components/CanvasWorld";
 
-type Stage = "intro" | "first" | "canvas";
-
 export default function App() {
-  const [stage, setStage] = useState<Stage>("intro");
-  const [showFirst, setShowFirst] = useState(false);
+  // Main Canvas mounts as soon as the papers are fully closed (covered), so
+  // it's sitting ready underneath the moment they pull apart — the paper
+  // opening is the only motion into this view, never a blank/late-mounted gap.
+  const [showCanvas, setShowCanvas] = useState(false);
+  const [introDone, setIntroDone] = useState(false);
 
   return (
     <div className="app-root">
-      {stage === "canvas" && <CanvasWorld />}
-      {showFirst && stage !== "canvas" && <FirstCanvas onProceed={() => setStage("canvas")} />}
-      {stage === "intro" && (
-        <IntroSequence onCovered={() => setShowFirst(true)} onComplete={() => setStage("first")} />
-      )}
+      {showCanvas && <CanvasWorld />}
+      {!introDone && <IntroSequence onCovered={() => setShowCanvas(true)} onComplete={() => setIntroDone(true)} />}
     </div>
   );
 }

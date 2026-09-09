@@ -4,9 +4,10 @@ import { heroInstagram, POLAROID_LARGE_W, POLAROID_LARGE_H } from "./mainCanvasL
 // Stops 01-04 are now rendered literally by <MainCanvasScene> (a pixel-exact
 // port of the Paper "Main Canvas" artboard) instead of the doodle/placeholder
 // system below. `position` and `hero` are kept here — computed from that same
-// Paper data — because useJourney/JourneyController still steer the camera
-// off these two fields; the old doodles/photos/annotations arrays for these
-// four are no longer rendered anywhere and are intentionally omitted.
+// Paper data — because useGuidedStory still steers the camera and the
+// grey<->color reveal off these two fields; the old doodles/photos/annotations
+// arrays for these four are no longer rendered anywhere and are intentionally
+// omitted.
 export const chapters: ChapterData[] = [
   {
     id: "chapter-01",
