@@ -11,7 +11,7 @@ import {
   splitTopImages,
   splitBottomImages,
   polaroidsC,
-  photoC,
+  cImages,
   cTopImages,
   cBottomImages,
   polaroidsD,
@@ -191,7 +191,7 @@ export function MainCanvasScene({
                 <img src={cBottomImages[i]!} alt="" style={{ position: "absolute", left: 0, top: "50%", width: "100%", height: "50%", objectFit: "cover", filter: PHOTO_GREY }} />
               </>
             ) : (
-              <img src={photoC} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", filter: PHOTO_GREY }} />
+              <img src={cImages[i]} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", filter: PHOTO_GREY }} />
             )}
           </div>
         </PolaroidCard>

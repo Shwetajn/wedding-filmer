@@ -21,6 +21,14 @@ import stop2D2Top from "../assets/stop2/d2-top-pink-flowers.jpg";
 import stop2D2Bottom from "../assets/stop2/d2-bottom-white-flowers.jpg";
 import stop2ETop from "../assets/stop2/e-top-sunset-wires.jpg";
 import stop2EBottom from "../assets/stop2/e-bottom-night-street.jpg";
+import stop3Hero from "../assets/stop3/hero.gif";
+import stop3C from "../assets/stop3/c.jpg";
+import stop3SplitTop from "../assets/stop3/split-top.jpg";
+import stop3SplitBottom from "../assets/stop3/split-bottom.jpg";
+import stop3DTop from "../assets/stop3/d-top.jpg";
+import stop3DBottom from "../assets/stop3/d-bottom.jpg";
+import stop3ETop from "../assets/stop3/e-top.jpg";
+import stop3EBottom from "../assets/stop3/e-bottom.jpg";
 import paperTexture from "../assets/main-canvas/paper-texture.png";
 import { WORLD_HEIGHT } from "./world";
 
@@ -113,14 +121,15 @@ export const polaroidsLarge: PolaroidLarge[] = [
 export const POLAROID_LARGE_W = 347.41;
 export const POLAROID_LARGE_H = 418.52;
 export { heroInstagram };
-/** stop 2's hero uses its replaced photo; stops 1/3/4 keep the shared default */
-export const heroImages = [heroInstagram, stop2Hero, heroInstagram, heroInstagram];
+/** stop 2 and stop 3's heroes use their replaced photos (stop 3's is an
+ * animated GIF); stop 1/4 keep the shared default */
+export const heroImages = [heroInstagram, stop2Hero, stop3Hero, heroInstagram];
 /** Paper renders each hero with a plain CSS background-size, read per node
  * via get_computed_styles rather than assumed — stop 1's is "contain" (the
  * shared placeholder's own aspect ratio leaves it borderless either way),
- * but stop 2's real photo is noticeably narrower than the frame and is
- * explicitly "cover" in Paper, so it must crop full-bleed, not letterbox. */
-export const heroFit: ("contain" | "cover")[] = ["contain", "cover", "contain", "contain"];
+ * but stop 2 and stop 3's real photos are noticeably narrower than the
+ * frame, so they crop full-bleed ("cover") rather than letterbox. */
+export const heroFit: ("contain" | "cover")[] = ["contain", "cover", "cover", "contain"];
 
 /** small polaroid split into two stacked half-photos */
 export interface PolaroidSplit {
@@ -137,9 +146,9 @@ export const polaroidsSplit: PolaroidSplit[] = [
   { x: 2702, y: 494 },
 ];
 export { splitTop, splitBottom };
-/** stop 1 and stop 2's split polaroids use their replaced photos; stops 3-4 keep the shared default */
-export const splitTopImages = [hallwayGroup, stop2SplitTop, splitTop, splitTop, stop2D2Top];
-export const splitBottomImages = [stageSpeaker, stop2SplitBottom, splitBottom, splitBottom, stop2D2Bottom];
+/** stop 1, 2, and 3's split polaroids use their replaced photos; stop 4 keeps the shared default */
+export const splitTopImages = [hallwayGroup, stop2SplitTop, stop3SplitTop, splitTop, stop2D2Top];
+export const splitBottomImages = [stageSpeaker, stop2SplitBottom, stop3SplitBottom, splitBottom, stop2D2Bottom];
 
 export interface SmallPolaroid {
   x: number;
@@ -157,6 +166,8 @@ export const polaroidsC: SmallPolaroid[] = [
   { x: 3633, y: 1137 },
 ];
 export { photoC };
+/** stop 3's card (index 2) is its own single replaced photo (not split) */
+export const cImages = [photoC, photoC, stop3C];
 export const cTopImages: (string | null)[] = [null, stop2CTop, null];
 export const cBottomImages: (string | null)[] = [null, stop2CBottom, null];
 
@@ -174,8 +185,8 @@ export const polaroidsD: SmallPolaroid[] = [
 ];
 export { photoD };
 export const dImages = [photoD, stop2D, photoD];
-export const dTopImages: (string | null)[] = [null, null, null];
-export const dBottomImages: (string | null)[] = [null, null, null];
+export const dTopImages: (string | null)[] = [null, null, stop3DTop];
+export const dBottomImages: (string | null)[] = [null, null, stop3DBottom];
 
 export const polaroidsE: SmallPolaroid[] = [
   { x: 639, y: 813 },
@@ -184,8 +195,10 @@ export const polaroidsE: SmallPolaroid[] = [
   { x: 4035, y: 841 },
 ];
 export { photoE };
-export const eTopImages: (string | null)[] = [null, stop2ETop, null, null];
-export const eBottomImages: (string | null)[] = [null, stop2EBottom, null, null];
+/** array order is stop1, stop2, stop4, stop3 (matches Paper's world positions,
+ * not visual stop order) — index 3 is stop 3's card */
+export const eTopImages: (string | null)[] = [null, stop2ETop, null, stop3ETop];
+export const eBottomImages: (string | null)[] = [null, stop2EBottom, null, stop3EBottom];
 
 export interface ContentBlock {
   id: string;
@@ -255,8 +268,13 @@ export const annotations: Annotation[] = [
   // stop 3 — re-synced from Paper (4 new scribbles scattered around its cluster)
   { text: "core people + fun ", x: 3566, y: 1407, color: "#854C14" },
   { text: "creatives", x: 3776, y: 1103, color: "#854C14" },
-  { text: "one big family", x: 4423, y: 950, color: "#854C14" },
+  { text: "one big family", x: 4343, y: 950, color: "#854C14" },
   { text: "too creative ? tried", x: 4020, y: 1539, color: "#854C14" },
+  // stop 4 — eyeballed from a reference screenshot while Paper MCP was
+  // rate-limited; positions/rotation are estimates, not re-derived from
+  // Paper. Re-check against Paper once MCP access is back.
+  { text: "too private to share the face", x: 3035, y: 2210, color: "#854C14" },
+  { text: "a beautiful moment etched forever", x: 2603, y: 2825, color: "#854C14" },
 ];
 
 export const headline = {
