@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Analytics } from "@vercel/analytics/react";
 import { IntroSequence } from "./components/intro/IntroSequence";
 import { CanvasWorld } from "./components/CanvasWorld";
 
@@ -13,6 +14,7 @@ export default function App() {
     <div className="app-root">
       {showCanvas && <CanvasWorld />}
       {!introDone && <IntroSequence onCovered={() => setShowCanvas(true)} onComplete={() => setIntroDone(true)} />}
+      <Analytics />
     </div>
   );
 }
