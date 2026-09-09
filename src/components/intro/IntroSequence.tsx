@@ -51,6 +51,11 @@ export function IntroSequence({ onCovered, onComplete }: IntroSequenceProps) {
   const prefersReducedMotion = Boolean(useReducedMotion());
   const [phase, setPhase] = useState<IntroPhase>("paper");
   const [ready, setReady] = useState(false);
+  // Once the shutter has fully closed over the scene, the paper background
+  // and camera behind it have nothing left to show and must stop rendering
+  // immediately — waiting for onComplete/introDone leaves them mounted (and
+  // stacked above CanvasWorld) for the entire open animation.
+  const [covered, setCovered] = useState(false);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   useEffect(() => {
@@ -88,33 +93,40 @@ export function IntroSequence({ onCovered, onComplete }: IntroSequenceProps) {
     onComplete();
   };
 
+  const handleCovered = () => {
+    setCovered(true);
+    onCovered();
+  };
+
   if (!ready) {
     return <div className="intro-sequence intro-sequence--loading" style={{ backgroundImage: `url(${paperBg})` }} />;
   }
 
   return (
     <>
-      <div className="intro-sequence" data-intro-phase={phase}>
-        <PaperBackground />
-        <RedPaper />
+      {!covered && (
+        <div className="intro-sequence" data-intro-phase={phase}>
+          <PaperBackground />
+          <RedPaper />
 
-        <AnimatePresence>
-          {phase === "quote" && (
-            <motion.div key="quote" exit={{ opacity: 0 }} transition={{ duration: 0.35, ease: "easeOut" }}>
-              <TypewriterQuote reduced={prefersReducedMotion} onDone={handleQuoteDone} />
-            </motion.div>
+          <AnimatePresence>
+            {phase === "quote" && (
+              <motion.div key="quote" exit={{ opacity: 0 }} transition={{ duration: 0.35, ease: "easeOut" }}>
+                <TypewriterQuote reduced={prefersReducedMotion} onDone={handleQuoteDone} />
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {(phase === "camera" || phase === "papers" || phase === "done") && (
+            <div className="intro-camera-stage">
+              <CameraAsset phase={phase} reduced={prefersReducedMotion} />
+            </div>
           )}
-        </AnimatePresence>
-
-        {(phase === "camera" || phase === "papers" || phase === "done") && (
-          <div className="intro-camera-stage">
-            <CameraAsset phase={phase} reduced={prefersReducedMotion} />
-          </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {(phase === "papers" || phase === "done") && (
-        <PastedPapers reduced={prefersReducedMotion} onClosed={onCovered} onComplete={handlePapersComplete} />
+        <PastedPapers reduced={prefersReducedMotion} onClosed={handleCovered} onComplete={handlePapersComplete} />
       )}
     </>
   );

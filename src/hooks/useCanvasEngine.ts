@@ -28,8 +28,6 @@ export function useCanvasEngine(onInterupt?: () => void) {
 
     const contentW = WORLD_WIDTH * ns;
     const contentH = WORLD_HEIGHT * ns;
-    const marginX = vw * 0.4;
-    const marginY = vh * 0.4;
 
     let clampedX = nx;
     let clampedY = ny;
@@ -37,16 +35,16 @@ export function useCanvasEngine(onInterupt?: () => void) {
     if (contentW <= vw) {
       clampedX = (vw - contentW) / 2;
     } else {
-      const minX = vw - contentW - marginX;
-      const maxX = marginX;
+      const minX = vw - contentW;
+      const maxX = 0;
       clampedX = Math.min(maxX, Math.max(minX, nx));
     }
 
     if (contentH <= vh) {
       clampedY = (vh - contentH) / 2;
     } else {
-      const minY = vh - contentH - marginY;
-      const maxY = marginY;
+      const minY = vh - contentH;
+      const maxY = 0;
       clampedY = Math.min(maxY, Math.max(minY, ny));
     }
 

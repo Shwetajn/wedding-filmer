@@ -6,10 +6,13 @@ import polaroidFrame from "../assets/main-canvas/polaroid-frame.png";
 import heroInstagram from "../assets/main-canvas/hero-instagram.jpg";
 import splitTop from "../assets/main-canvas/split-top.jpg";
 import splitBottom from "../assets/main-canvas/split-bottom.jpg";
+import hallwayGroup from "../assets/stop1/hallway-group.jpg";
+import stageSpeaker from "../assets/stop1/stage-speaker.jpg";
 import photoC from "../assets/main-canvas/photo-c.jpg";
 import photoD from "../assets/main-canvas/photo-d.jpg";
 import photoE from "../assets/main-canvas/photo-e.jpg";
 import paperTexture from "../assets/main-canvas/paper-texture.png";
+import { WORLD_HEIGHT } from "./world";
 
 export const MAIN_CANVAS_WIDTH = 4794;
 export const MAIN_CANVAS_HEIGHT = 2961;
@@ -24,11 +27,16 @@ export { polaroidFrame, paperTexture };
 /** the canvas-root background: a portrait texture image rotated -90deg to
  * cover the full landscape artboard — replicated verbatim from Paper's own
  * CSS transform rather than pre-rotating the asset, so it stays pixel-exact */
+// Rotated -90deg around its own top-left, so its screen-space footprint ends
+// up width x height = (this.height) x (this.width) — sized here to cover the
+// full pannable world (WORLD_WIDTH x WORLD_HEIGHT from data/world.ts, not
+// just the 4794x2961 artboard) so nothing pans past the texture's edge into
+// the plain background color.
 export const backgroundTexture = {
-  width: 2961,
+  width: WORLD_HEIGHT,
   height: 4794,
   left: 0,
-  top: 2961,
+  top: WORLD_HEIGHT,
   rotate: -90,
 };
 
@@ -108,6 +116,9 @@ export const polaroidsSplit: PolaroidSplit[] = [
   { x: 3027, y: 2259 },
 ];
 export { splitTop, splitBottom };
+/** stop 1's split polaroid uses the replaced photos; stops 2-4 keep the shared default */
+export const splitTopImages = [hallwayGroup, splitTop, splitTop, splitTop];
+export const splitBottomImages = [stageSpeaker, splitBottom, splitBottom, splitBottom];
 
 export interface SmallPolaroid {
   x: number;
@@ -217,10 +228,16 @@ export const aboutBlock = {
   x: 1084,
   y: 1964,
   width: 556,
-  quote: "I've been photographing things for w while. \n\nNow i want to learn how to tell those stories differently.",
+  quote: "I've been photographing things for a while. \n\nNow i want to learn how to tell those stories differently.",
   name: "Shweta Jain",
   roles: ["Product Designer", "Photographer at heart.", "Learning to become a cinematographer one day."],
 };
+
+// Camera framing for the guided story's final beat — centers roughly on the
+// quote + name + roles block as a group (not sourced from Paper as a "stop",
+// since this block isn't one; picked the same way stop positions were: the
+// bounding-box center of the cluster).
+export const aboutFocus = { x: 1362, y: 2144 };
 
 export interface ConnectorFragment {
   /** the SVG element's own box, in artboard-local px, before rotation */
@@ -280,8 +297,11 @@ export const connectorFragments: ConnectorFragment[] = [
 ];
 
 /** connectorFragments[N] that visually runs between stop (i+1) and stop (i+2)
- * — e.g. TRANSITION_FRAGMENT_INDICES[0] is the 01->02 segment. Fragment 1 (ND)
- * doesn't sit between any two stops (it's an isolated mark near stop 04) so
- * it's never part of the guided draw-in sequence — it renders statically from
- * the start instead. */
+ * — e.g. TRANSITION_FRAGMENT_INDICES[0] is the 01->02 segment. */
 export const TRANSITION_FRAGMENT_INDICES = [0, 2, 3];
+
+/** connectorFragments[1] — geometrically sits between stop 04 and the
+ * bottom-left "about" block, not between two stops, so it's the final
+ * segment: it draws in as the guided story's last beat, camera panning from
+ * stop 04 to the about block while this segment draws in sync. */
+export const ABOUT_CONNECTOR_FRAGMENT_INDEX = 1;

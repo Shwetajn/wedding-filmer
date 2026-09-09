@@ -80,8 +80,11 @@ export function CanvasWorld() {
             headingRevealed={guidedStory.headingRevealed}
             revealedStops={guidedStory.revealedStops}
             captionStopIndex={guidedStory.captionStopIndex}
+            captionRevealed={guidedStory.captionRevealed}
             drawingFragment={guidedStory.drawingFragment}
             drawnFragments={guidedStory.drawnFragments}
+            aboutRevealed={guidedStory.aboutRevealed}
+            aboutTyping={guidedStory.aboutTyping}
             onFollowJourney={() => guidedStory.start()}
           />
           <FinalChapter chapter={chapters[4]} />

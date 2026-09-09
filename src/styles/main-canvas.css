@@ -41,7 +41,7 @@
 
 /* Connector-segment draw-in: a CSS keyframe (not a transition) so the
    animation always plays from its 0% state on mount, with no race against
-   the element's initial paint. The dotted "1 7" strokeDasharray is set
+   the element's initial paint. The dotted "1 4" strokeDasharray is set
    inline and never changes — only strokeDashoffset animates, so dots reveal
    progressively along the path instead of drawing as a solid line. */
 @keyframes connector-draw {
@@ -54,4 +54,19 @@
 }
 .connector-drawing {
   animation: connector-draw var(--connector-draw-duration, 1.4s) linear forwards;
+}
+
+.main-canvas-typewriter-cursor {
+  display: inline-block;
+  width: 3px;
+  height: 0.85em;
+  margin-left: 4px;
+  background: currentColor;
+  vertical-align: -0.08em;
+  animation: main-canvas-cursor-blink 0.85s steps(1) infinite;
+}
+@keyframes main-canvas-cursor-blink {
+  50% {
+    opacity: 0;
+  }
 }

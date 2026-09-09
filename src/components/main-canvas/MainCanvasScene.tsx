@@ -7,8 +7,8 @@ import {
   POLAROID_LARGE_H,
   heroInstagram,
   polaroidsSplit,
-  splitTop,
-  splitBottom,
+  splitTopImages,
+  splitBottomImages,
   polaroidsC,
   photoC,
   polaroidsD,
@@ -24,6 +24,7 @@ import {
   aboutBlock,
   connectorFragments,
   TRANSITION_FRAGMENT_INDICES,
+  ABOUT_CONNECTOR_FRAGMENT_INDEX,
   backgroundTexture,
   paperTexture,
   MAIN_CANVAS_WIDTH,
@@ -35,6 +36,8 @@ import handCutoutSrc from "../../assets/main-canvas/hand-cutout.png";
 import { PolaroidCard } from "./PolaroidCard";
 import { CornerBracket } from "./CornerBracket";
 import { Typewriter } from "../Typewriter";
+import { useState } from "react";
+import { motion } from "motion/react";
 
 const FRAME_FILTER = "brightness(92%) contrast(77%) saturate(25%)";
 // same grey<->color language as PhotoFrame's existing active/inactive treatment
@@ -52,10 +55,16 @@ interface MainCanvasSceneProps {
   revealedStops: boolean[];
   /** stop index currently typing its caption; already-revealed stops show their full caption statically */
   captionStopIndex: number | null;
+  /** stop indices whose caption container is allowed to render at all (typing live or already finished) */
+  captionRevealed: boolean[];
   /** connectorFragments array-index currently mid draw-in animation */
   drawingFragment: number | null;
   /** connectorFragments array-index that have finished drawing and now render statically */
   drawnFragments: boolean[];
+  /** whether the bottom-left "about" block is visible at all */
+  aboutRevealed: boolean;
+  /** whether the about block's quote is actively typing right now */
+  aboutTyping: boolean;
   onFollowJourney: () => void;
 }
 
@@ -70,10 +79,17 @@ export function MainCanvasScene({
   headingRevealed,
   revealedStops,
   captionStopIndex,
+  captionRevealed,
   drawingFragment,
   drawnFragments,
+  aboutRevealed,
+  aboutTyping,
   onFollowJourney,
 }: MainCanvasSceneProps) {
+  // Types in on mount — the Main Canvas is already centered on this block the
+  // instant the paper finishes opening, so this is the first thing the user
+  // sees animate. "Follow My Journey" only fades in once it's done typing.
+  const [headlineStage, setHeadlineStage] = useState<"line1" | "line2" | "done">("line1");
   return (
     <div style={{ position: "absolute", left: 0, top: 0, width: MAIN_CANVAS_WIDTH, height: MAIN_CANVAS_HEIGHT }}>
       <div
@@ -153,8 +169,8 @@ export function MainCanvasScene({
       {polaroidsSplit.map((p, i) => (
         <PolaroidCard key={i} x={p.x} y={p.y} width={POLAROID_SMALL_W} height={POLAROID_SMALL_H} frameFilter={FRAME_FILTER}>
           <div style={{ position: "absolute", left: 13.63, top: 15.81, width: 174.98, height: 220.16, overflow: "clip" }}>
-            <img src={splitTop} alt="" style={{ position: "absolute", left: 0, top: 0, width: "100%", height: "50%", objectFit: "cover", filter: PHOTO_GREY }} />
-            <img src={splitBottom} alt="" style={{ position: "absolute", left: 0, top: "50%", width: "100%", height: "50%", objectFit: "cover", filter: PHOTO_GREY }} />
+            <img src={splitTopImages[i]} alt="" style={{ position: "absolute", left: 0, top: 0, width: "100%", height: "50%", objectFit: "cover", filter: PHOTO_GREY }} />
+            <img src={splitBottomImages[i]} alt="" style={{ position: "absolute", left: 0, top: "50%", width: "100%", height: "50%", objectFit: "cover", filter: PHOTO_GREY }} />
           </div>
         </PolaroidCard>
       ))}
@@ -185,7 +201,11 @@ export function MainCanvasScene({
 
       {contentBlocks.map((b, i) => {
         const blOverrideY = CONTENT_BLOCK_BL_OVERRIDE[b.id];
-        const revealed = revealedStops[i];
+        // gated on captionRevealed (set the instant this stop's caption phase
+        // starts), NOT revealedStops (set earlier, at highlight) — otherwise
+        // the full caption text pops in during the highlight beat, then gets
+        // reset to empty and re-typed once captionStopIndex actually arrives.
+        const revealed = captionRevealed[i];
         const textStyle: React.CSSProperties = {
           position: "absolute",
           left: 23.5,
@@ -255,60 +275,86 @@ export function MainCanvasScene({
         </div>
       ))}
 
-      {/* central headline + CTA */}
+      {/* central headline + CTA — typewriter, then the CTA fades in once done */}
       <div style={{ position: "absolute", left: headline.x, top: headline.y, width: headline.width, display: "flex", flexDirection: "column", alignItems: "center", gap: 30 }}>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
           <div style={{ color: "#1A1A1A", fontFamily: '"Bebas Neue", system-ui, sans-serif', fontSize: 173, lineHeight: "208px", textAlign: "center" }}>
-            Hi There,
+            {headlineStage === "line1" ? (
+              <Typewriter text="Hi There," reduced={reduced} cursorClassName="main-canvas-typewriter-cursor" onTypingComplete={() => setHeadlineStage("line2")} />
+            ) : (
+              "Hi There,"
+            )}
           </div>
-          <div style={{ display: "flex", alignItems: "flex-start" }}>
-            <div style={{ color: "#1A1A1A", fontFamily: '"Bebas Neue", system-ui, sans-serif', fontSize: 173, lineHeight: "208px" }}>I am</div>
-            <div style={{ borderBottom: "4px solid #7A0000" }}>
-              <div style={{ color: "#1A1A1A", fontFamily: '"Bebas Neue", system-ui, sans-serif', fontSize: 173, lineHeight: "208px" }}>
-                &nbsp;Shweta Jain
+          {headlineStage !== "line1" && (
+            <div style={{ display: "flex", alignItems: "flex-start" }}>
+              <div style={{ color: "#1A1A1A", fontFamily: '"Bebas Neue", system-ui, sans-serif', fontSize: 173, lineHeight: "208px" }}>I am</div>
+              <div style={{ borderBottom: "4px solid #7A0000" }}>
+                <div style={{ color: "#1A1A1A", fontFamily: '"Bebas Neue", system-ui, sans-serif', fontSize: 173, lineHeight: "208px" }}>
+                  {headlineStage === "line2" ? (
+                    <Typewriter text={" Shweta Jain"} reduced={reduced} cursorClassName="main-canvas-typewriter-cursor" onDone={() => setHeadlineStage("done")} />
+                  ) : (
+                    <>&nbsp;Shweta Jain</>
+                  )}
+                </div>
               </div>
+            </div>
+          )}
+        </div>
+        <motion.button
+          type="button"
+          className="main-canvas-journey-cta"
+          onClick={onFollowJourney}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: headlineStage === "done" ? 1 : 0 }}
+          transition={{ duration: reduced ? 0.15 : 0.5, ease: "easeOut" }}
+          style={{ pointerEvents: headlineStage === "done" ? "auto" : "none" }}
+        >
+          Follow My Journey <span className="main-canvas-journey-cta__arrow" aria-hidden="true">→</span>
+        </motion.button>
+      </div>
+
+      {/* bottom-left about block — the guided story's final beat: hidden until
+          the connector segment from stop 04 arrives, then its quote types in
+          the same way each stop's caption does. */}
+      {aboutRevealed && (
+        <div style={{ position: "absolute", left: aboutBlock.x, top: aboutBlock.y, display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 23 }}>
+          <div style={{ paddingBottom: 36, borderBottom: "1px solid rgba(0,0,0,0.5)" }}>
+            <div style={{ width: aboutBlock.width, color: "#2A1C19", fontFamily: '"Satoshi", system-ui, sans-serif', fontWeight: 500, fontStyle: "italic", fontSize: 42, lineHeight: "52px", whiteSpace: "pre-wrap" }}>
+              {aboutTyping ? (
+                <Typewriter text={aboutBlock.quote} reduced={reduced} cursorClassName="main-canvas-typewriter-cursor" />
+              ) : (
+                aboutBlock.quote
+              )}
+            </div>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 23 }}>
+            <div style={{ width: aboutBlock.width, color: "#111111", fontFamily: '"Satoshi", system-ui, sans-serif', fontWeight: 500, fontSize: 42, lineHeight: "52px" }}>
+              {aboutBlock.name}
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 8 }}>
+              {aboutBlock.roles.map((r, i) => (
+                <div key={i} style={{ color: "#111111", fontFamily: '"Satoshi", system-ui, sans-serif', fontStyle: "italic", fontSize: 24, lineHeight: "30px" }}>
+                  {r}
+                </div>
+              ))}
             </div>
           </div>
         </div>
-        <button type="button" className="main-canvas-journey-cta" onClick={onFollowJourney}>
-          Follow My Journey <span className="main-canvas-journey-cta__arrow" aria-hidden="true">→</span>
-        </button>
-      </div>
-
-      {/* bottom-left about block */}
-      <div style={{ position: "absolute", left: aboutBlock.x, top: aboutBlock.y, display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 23 }}>
-        <div style={{ paddingBottom: 36, borderBottom: "1px solid rgba(0,0,0,0.5)" }}>
-          <div style={{ width: aboutBlock.width, color: "#2A1C19", fontFamily: '"Satoshi", system-ui, sans-serif', fontWeight: 500, fontStyle: "italic", fontSize: 42, lineHeight: "52px", whiteSpace: "pre-wrap" }}>
-            {aboutBlock.quote}
-          </div>
-        </div>
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 23 }}>
-          <div style={{ width: aboutBlock.width, color: "#111111", fontFamily: '"Satoshi", system-ui, sans-serif', fontWeight: 500, fontSize: 42, lineHeight: "52px" }}>
-            {aboutBlock.name}
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 8 }}>
-            {aboutBlock.roles.map((r, i) => (
-              <div key={i} style={{ color: "#111111", fontFamily: '"Satoshi", system-ui, sans-serif', fontStyle: "italic", fontSize: 24, lineHeight: "30px" }}>
-                {r}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      )}
 
       {/* connector doodle — routed on top, matching Paper's stacking order.
-          Fragment 1 is a static isolated mark; fragments 0/2/3 sit between two
-          stops and only draw themselves in once the guided story reaches that
-          transition (see TRANSITION_FRAGMENT_INDICES). */}
+          All 4 fragments are part of the guided draw-in sequence: 0/2/3 sit
+          between two stops, fragment 1 sits between stop 04 and the about
+          block (see TRANSITION_FRAGMENT_INDICES / ABOUT_CONNECTOR_FRAGMENT_INDEX). */}
       {connectorFragments.map((f, i) => {
-        const isTransition = TRANSITION_FRAGMENT_INDICES.includes(i);
+        const isTransition = TRANSITION_FRAGMENT_INDICES.includes(i) || i === ABOUT_CONNECTOR_FRAGMENT_INDEX;
         const drawn = !isTransition || drawnFragments[i];
         const drawingNow = isTransition && drawingFragment === i;
 
         if (!drawn && !drawingNow) return null;
 
         // pathLength=100 normalizes dash math to a fixed unit length
-        // regardless of this fragment's actual geometry, so the same "1 7"
+        // regardless of this fragment's actual geometry, so the same "1 4"
         // dotted pattern stays constant the whole time — only
         // strokeDashoffset animates (100 -> 0), revealing dots progressively
         // along the path. This must never render as a solid stroke that
@@ -338,7 +384,7 @@ export function MainCanvasScene({
               opacity={0.78}
               className={drawingNow ? "connector-drawing" : undefined}
               style={{
-                strokeDasharray: "1 7",
+                strokeDasharray: "1 4",
                 strokeDashoffset: drawn ? 0 : 100,
                 ...(drawingNow ? { "--connector-draw-duration": `${reduced ? 0.2 : GUIDED_TRANSITION_S}s` } : {}),
               } as React.CSSProperties}

@@ -5,6 +5,9 @@
   background: var(--paper-deep);
   touch-action: none;
   cursor: grab;
+  /* Explicit and below .intro-shutter's z-index: 60 — this must never be
+     implicitly outranked by anything from the intro. */
+  z-index: 10;
 }
 .canvas-viewport:active {
   cursor: grabbing;
