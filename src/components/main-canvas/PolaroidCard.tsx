@@ -14,10 +14,19 @@ interface PolaroidCardProps {
 export function PolaroidCard({ x, y, width, height, frameFilter, children }: PolaroidCardProps) {
   return (
     <div style={{ position: "absolute", left: x, top: y, width, height, overflow: "clip", boxSizing: "border-box" }}>
-      <img
-        src={polaroidFrame}
-        alt=""
-        style={{ position: "absolute", left: 0, top: 0, width, height, objectFit: "cover", filter: frameFilter }}
+      <div
+        style={{
+          position: "absolute",
+          left: 0,
+          top: 0,
+          width,
+          height,
+          backgroundImage: `url(${polaroidFrame})`,
+          backgroundPosition: "44.98% 42.71%",
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "114% 112.45%",
+          filter: frameFilter,
+        }}
       />
       {children}
     </div>

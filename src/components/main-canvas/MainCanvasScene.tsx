@@ -22,7 +22,9 @@ import {
   annotations,
   headline,
   aboutBlock,
-  connectorPathD,
+  connectorFragments,
+  backgroundTexture,
+  paperTexture,
   MAIN_CANVAS_WIDTH,
   MAIN_CANVAS_HEIGHT,
 } from "../../data/mainCanvasLayout";
@@ -41,6 +43,21 @@ const FRAME_FILTER = "brightness(92%) contrast(77%) saturate(25%)";
 export function MainCanvasScene() {
   return (
     <div style={{ position: "absolute", left: 0, top: 0, width: MAIN_CANVAS_WIDTH, height: MAIN_CANVAS_HEIGHT }}>
+      <div
+        style={{
+          position: "absolute",
+          left: backgroundTexture.left,
+          top: backgroundTexture.top,
+          width: backgroundTexture.width,
+          height: backgroundTexture.height,
+          backgroundImage: `url(${paperTexture})`,
+          backgroundPosition: "50%",
+          backgroundSize: "cover",
+          transformOrigin: "0% 0%",
+          transform: `rotate(${backgroundTexture.rotate}deg)`,
+        }}
+      />
+
       {stopTitles.map((t) => (
         <div key={t.id} style={{ position: "absolute", left: t.x, top: t.y, width: 191.25, display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 11.19 }}>
           <div
@@ -229,23 +246,34 @@ export function MainCanvasScene() {
         </div>
       </div>
 
-      {/* connector doodle — routed on top, matching Paper's stacking order */}
-      <svg
-        width={MAIN_CANVAS_WIDTH}
-        height={MAIN_CANVAS_HEIGHT}
-        viewBox={`0 0 ${MAIN_CANVAS_WIDTH} ${MAIN_CANVAS_HEIGHT}`}
-        style={{ position: "absolute", left: 0, top: 0, overflow: "visible" }}
-      >
-        <path
-          d={connectorPathD}
-          fill="none"
-          stroke="#161412"
-          strokeWidth={2.5}
-          strokeLinecap="round"
-          strokeDasharray="1 7"
-          opacity={0.78}
-        />
-      </svg>
+      {/* connector doodle — routed on top, matching Paper's stacking order.
+          4 separate rotated fragments, per Paper's current state. */}
+      {connectorFragments.map((f, i) => (
+        <svg
+          key={i}
+          width={f.width}
+          height={f.height}
+          viewBox={f.viewBox}
+          style={{
+            position: "absolute",
+            left: f.left,
+            top: f.top,
+            overflow: "visible",
+            transformOrigin: "0% 0%",
+            transform: f.rotate ? `rotate(${f.rotate}deg)` : undefined,
+          }}
+        >
+          <path
+            d={f.d}
+            fill="none"
+            stroke="#161412"
+            strokeWidth={2.5}
+            strokeLinecap="round"
+            strokeDasharray="1 7"
+            opacity={0.78}
+          />
+        </svg>
+      ))}
     </div>
   );
 }

@@ -9,11 +9,23 @@ import splitBottom from "../assets/main-canvas/split-bottom.jpg";
 import photoC from "../assets/main-canvas/photo-c.jpg";
 import photoD from "../assets/main-canvas/photo-d.jpg";
 import photoE from "../assets/main-canvas/photo-e.jpg";
+import paperTexture from "../assets/main-canvas/paper-texture.png";
 
 export const MAIN_CANVAS_WIDTH = 4794;
 export const MAIN_CANVAS_HEIGHT = 2961;
 
-export { polaroidFrame };
+export { polaroidFrame, paperTexture };
+
+/** the canvas-root background: a portrait texture image rotated -90deg to
+ * cover the full landscape artboard — replicated verbatim from Paper's own
+ * CSS transform rather than pre-rotating the asset, so it stays pixel-exact */
+export const backgroundTexture = {
+  width: 2961,
+  height: 4794,
+  left: 0,
+  top: 2961,
+  rotate: -90,
+};
 
 export interface StopTitle {
   id: string;
@@ -204,5 +216,59 @@ export const aboutBlock = {
   roles: ["Product Designer", "Photographer at heart.", "Learning to become a cinematographer one day."],
 };
 
-export const connectorPathD =
-  "M 300 1000 C 420 940, 480 1080, 620 900 C 720 780, 640 680, 780 620 C 900 570, 860 460, 1000 430 C 1150 400, 1080 300, 1250 260 C 1450 210, 1500 320, 1650 180 C 1800 40, 1900 140, 2050 90 C 2220 30, 2350 130, 2500 100 C 2680 65, 2760 180, 2920 190 C 3120 200, 3200 320, 3380 420 C 3560 520, 3620 650, 3780 780 C 3950 910, 4080 1020, 4150 1220 C 4220 1420, 4120 1520, 4080 1700 C 4040 1880, 4150 1950, 4000 2080 C 3820 2230, 3700 2100, 3550 2230 C 3400 2360, 3300 2260, 3150 2320 C 2980 2390, 2900 2300, 2750 2340";
+export interface ConnectorFragment {
+  /** the SVG element's own box, in artboard-local px, before rotation */
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+  /** viewBox exactly as Paper stores it — some fragments have a non-zero min-x/min-y */
+  viewBox: string;
+  rotate: number;
+  d: string;
+}
+
+/** Re-synced from Paper: the connector doodle is now 4 separate rotated dashed
+ * fragments (the user broke the single line into pieces and rotated/moved
+ * each one) rather than one continuous path. Each fragment's left/top/rotate
+ * is copied verbatim from Paper's own CSS (translate values become left/top
+ * since these fragments have no separate translate — rotation pivots on the
+ * box's own top-left corner, i.e. transform-origin 0% 0%). */
+export const connectorFragments: ConnectorFragment[] = [
+  {
+    left: 791,
+    top: 78,
+    width: 1296,
+    height: 1042,
+    viewBox: "0 0 1296 1042",
+    rotate: 0,
+    d: "M297 1010C409.674 959.973 466.011 1076.703 597.463 926.622C691.358 826.568 616.243 743.189 747.695 693.162C860.368 651.473 822.811 559.757 954.263 534.743C1095.106 509.73 1029.379 426.352 1189 393",
+  },
+  {
+    left: 2340,
+    top: 1588,
+    width: 983,
+    height: 1042,
+    viewBox: "313 0 983 1042",
+    rotate: 54.2,
+    d: "M538.271 1010C623.733 959.973 666.464 1076.703 766.168 926.622C837.386 826.568 780.413 743.189 880.117 693.162C965.578 651.473 937.092 559.757 1036.797 534.743C1143.624 509.73 1093.771 426.352 1214.842 393",
+  },
+  {
+    left: 3535.001,
+    top: 24,
+    width: 1162,
+    height: 1042,
+    viewBox: "0 0 1162 1042",
+    rotate: 60,
+    d: "M266.292 1010C367.316 959.973 417.828 1076.703 535.688 926.622C619.875 826.568 552.527 743.189 670.387 693.162C771.41 651.473 737.737 559.757 855.597 534.743C981.878 509.73 922.946 426.352 1066.063 393",
+  },
+  {
+    left: 4679.893,
+    top: 2674.982,
+    width: 1303,
+    height: 1238,
+    viewBox: "-31.894 0.026 1303 1238",
+    rotate: 175.17,
+    d: "M90.393 1168.946C232.877 1100.756 304.12 1259.865 470.35 1055.297C589.088 918.919 494.1 805.27 660.331 737.08C802.814 680.256 755.32 555.243 921.551 521.148C1099.658 487.054 1016.54 373.406 1218.393 327.946",
+  },
+];
