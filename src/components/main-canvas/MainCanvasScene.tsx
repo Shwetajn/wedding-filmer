@@ -16,6 +16,8 @@ import {
   cBottomImages,
   polaroidsD,
   dImages,
+  dTopImages,
+  dBottomImages,
   polaroidsE,
   photoE,
   eTopImages,
@@ -198,7 +200,14 @@ export function MainCanvasScene({
       {polaroidsD.map((p, i) => (
         <PolaroidCard key={i} x={p.x} y={p.y} width={POLAROID_SMALL_W} height={POLAROID_SMALL_H} frameFilter={FRAME_FILTER}>
           <div style={{ position: "absolute", left: 13.6, top: 15.85, width: 175.03, height: 216.14, overflow: "clip" }}>
-            <img src={dImages[i]} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", filter: PHOTO_GREY }} />
+            {dTopImages[i] ? (
+              <>
+                <img src={dTopImages[i]!} alt="" style={{ position: "absolute", left: 0, top: 0, width: "100%", height: "50%", objectFit: "cover", filter: PHOTO_GREY }} />
+                <img src={dBottomImages[i]!} alt="" style={{ position: "absolute", left: 0, top: "50%", width: "100%", height: "50%", objectFit: "cover", filter: PHOTO_GREY }} />
+              </>
+            ) : (
+              <img src={dImages[i]} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", filter: PHOTO_GREY }} />
+            )}
           </div>
         </PolaroidCard>
       ))}

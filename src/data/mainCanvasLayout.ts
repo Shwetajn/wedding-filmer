@@ -163,7 +163,10 @@ export const cBottomImages: (string | null)[] = [null, stop2CBottom, null];
 /** cover-fit photo, no mat color visible. Was 4 entries with stop 2's "M6"
  * frame miscounted as a single-cover card here — that frame is actually
  * split (moved to polaroidsSplit above), so this is stop 1/2/3's single-cover
- * D-cards only; stop 4 genuinely has none in Paper. */
+ * D-cards only; stop 4 genuinely has none in Paper. Stop 3's card (index 2)
+ * is split top/bottom in Paper instead of a single cover photo — see
+ * dTopImages/dBottomImages, checked first before falling back to dImages,
+ * same pattern as polaroidsC/polaroidsE below. */
 export const polaroidsD: SmallPolaroid[] = [
   { x: 305, y: 1391 },
   { x: 2046, y: 713 },
@@ -171,6 +174,8 @@ export const polaroidsD: SmallPolaroid[] = [
 ];
 export { photoD };
 export const dImages = [photoD, stop2D, photoD];
+export const dTopImages: (string | null)[] = [null, null, null];
+export const dBottomImages: (string | null)[] = [null, null, null];
 
 export const polaroidsE: SmallPolaroid[] = [
   { x: 639, y: 813 },
@@ -226,8 +231,10 @@ export const contentBlocks: ContentBlock[] = [
   },
 ];
 
-/** stop2's bottom-left bracket sits lower than the standard formula (Paper source anomaly, preserved as-is) */
-export const CONTENT_BLOCK_BL_OVERRIDE: Record<string, number> = { cb2: 988.059 };
+/** Paper had stop 2's bottom-left bracket sitting ~48px lower than its
+ * bottom-right bracket (the two are meant to be level, like every other
+ * stop) — corrected per explicit request rather than preserved as-is. */
+export const CONTENT_BLOCK_BL_OVERRIDE: Record<string, number> = {};
 
 export interface Annotation {
   text: string;
@@ -245,6 +252,11 @@ export const annotations: Annotation[] = [
   { text: "This caught my eye", x: 1987, y: 964, color: "#854C14" },
   { text: "NEVER SAW SOMETHING MORE BEAUTIFUL THAN THIS", x: 2675, y: 186, color: "#854C14" },
   { text: "JUST BECAUSE", x: 2843, y: 742, color: "#854C14" },
+  // stop 3 — re-synced from Paper (4 new scribbles scattered around its cluster)
+  { text: "core people + fun ", x: 3566, y: 1407, color: "#854C14" },
+  { text: "creatives", x: 3776, y: 1103, color: "#854C14" },
+  { text: "one big family", x: 4423, y: 950, color: "#854C14" },
+  { text: "too creative ? tried", x: 4020, y: 1539, color: "#854C14" },
 ];
 
 export const headline = {
