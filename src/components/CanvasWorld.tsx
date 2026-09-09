@@ -4,12 +4,10 @@ import { chapters } from "../data/chapters";
 import { WORLD_HEIGHT, WORLD_WIDTH } from "../data/world";
 import { useCanvasEngine } from "../hooks/useCanvasEngine";
 import { useJourney } from "../hooks/useJourney";
-import { Chapter } from "./Chapter";
-import { Chapter1 } from "./Chapter1";
 import { FinalChapter } from "./FinalChapter";
 import { CanvasControls } from "./CanvasControls";
 import { JourneyPill } from "./JourneyPill";
-import mainCanvasBg from "../assets/intro/main-canvas.png";
+import { MainCanvasScene } from "./main-canvas/MainCanvasScene";
 
 const ENTRY_POINT = chapters[0].position;
 const STOP1_SCALE = 0.62;
@@ -56,7 +54,6 @@ export function CanvasWorld() {
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerUp}
     >
-      <div className="canvas-world__photo" style={{ backgroundImage: `url(${mainCanvasBg})` }} />
       <div className="canvas-world__paper" />
 
       <motion.div
@@ -76,15 +73,7 @@ export function CanvasWorld() {
           transition={{ duration: 1.4 }}
           style={{ pointerEvents: zoomedOut ? "auto" : "none" }}
         >
-          <Chapter1
-            chapter={chapters[0]}
-            heroRevealed={journey.heroRevealed}
-            heroFocusing={journey.heroFocusing}
-            playDoodleDraw={journey.playDoodleDraw}
-          />
-          {chapters.slice(1, 4).map((chapter) => (
-            <Chapter key={chapter.id} chapter={chapter} />
-          ))}
+          <MainCanvasScene />
           <FinalChapter chapter={chapters[4]} />
         </motion.div>
       </motion.div>
