@@ -1,0 +1,60 @@
+.stop1-title__index {
+  display: block;
+  font-family: var(--font-satoshi);
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  color: var(--muted-blue-soft);
+  margin-bottom: 4px;
+}
+
+.stop1-title__heading {
+  font-family: var(--font-huge);
+  font-size: 30px;
+  line-height: 1.02;
+  font-weight: 400;
+  letter-spacing: 0.005em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin: 0;
+  white-space: nowrap;
+}
+
+.stop1-title__heading--accent {
+  color: var(--accent-red);
+}
+
+.stop1-story__text {
+  font-family: var(--font-satoshi);
+  font-size: 15.5px;
+  line-height: 1.55;
+  color: var(--accent-red);
+  margin: 0;
+}
+
+.stop1-recede {
+  position: absolute;
+  inset: 0;
+  will-change: opacity, filter;
+}
+
+.journey-pill {
+  position: fixed;
+  top: 50%;
+  right: 16px;
+  z-index: 40;
+  background: #ffffff;
+  color: var(--accent-red);
+  border: 1px solid rgba(28, 26, 23, 0.1);
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-family: var(--font-satoshi);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  box-shadow: var(--shadow-photo);
+}
+
+.journey-pill:hover {
+  box-shadow: var(--shadow-photo-lifted);
+}
