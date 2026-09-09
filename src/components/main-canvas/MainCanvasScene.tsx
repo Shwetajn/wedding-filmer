@@ -5,16 +5,20 @@ import {
   polaroidsLarge,
   POLAROID_LARGE_W,
   POLAROID_LARGE_H,
-  heroInstagram,
+  heroImages,
   polaroidsSplit,
   splitTopImages,
   splitBottomImages,
   polaroidsC,
   photoC,
+  cTopImages,
+  cBottomImages,
   polaroidsD,
-  photoD,
+  dImages,
   polaroidsE,
   photoE,
+  eTopImages,
+  eBottomImages,
   POLAROID_SMALL_W,
   POLAROID_SMALL_H,
   contentBlocks,
@@ -152,7 +156,7 @@ export function MainCanvasScene({
         <PolaroidCard key={i} x={p.x} y={p.y} width={POLAROID_LARGE_W} height={POLAROID_LARGE_H} frameFilter={FRAME_FILTER}>
           <div style={{ position: "absolute", left: 26.52, top: 27.74, width: 294.8, height: 364.04, overflow: "clip" }}>
             <img
-              src={heroInstagram}
+              src={heroImages[i]}
               alt=""
               style={{
                 width: "100%",
@@ -178,7 +182,14 @@ export function MainCanvasScene({
       {polaroidsC.map((p, i) => (
         <PolaroidCard key={i} x={p.x} y={p.y} width={POLAROID_SMALL_W} height={POLAROID_SMALL_H} frameFilter={FRAME_FILTER}>
           <div style={{ position: "absolute", left: 13.57, top: 15.8, width: 175.26, height: 216.24, background: "#DFD9DB", overflow: "clip" }}>
-            <img src={photoC} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", filter: PHOTO_GREY }} />
+            {cTopImages[i] ? (
+              <>
+                <img src={cTopImages[i]!} alt="" style={{ position: "absolute", left: 0, top: 0, width: "100%", height: "50%", objectFit: "cover", filter: PHOTO_GREY }} />
+                <img src={cBottomImages[i]!} alt="" style={{ position: "absolute", left: 0, top: "50%", width: "100%", height: "50%", objectFit: "cover", filter: PHOTO_GREY }} />
+              </>
+            ) : (
+              <img src={photoC} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", filter: PHOTO_GREY }} />
+            )}
           </div>
         </PolaroidCard>
       ))}
@@ -186,7 +197,7 @@ export function MainCanvasScene({
       {polaroidsD.map((p, i) => (
         <PolaroidCard key={i} x={p.x} y={p.y} width={POLAROID_SMALL_W} height={POLAROID_SMALL_H} frameFilter={FRAME_FILTER}>
           <div style={{ position: "absolute", left: 13.6, top: 15.85, width: 175.03, height: 216.14, overflow: "clip" }}>
-            <img src={photoD} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", filter: PHOTO_GREY }} />
+            <img src={dImages[i]} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", filter: PHOTO_GREY }} />
           </div>
         </PolaroidCard>
       ))}
@@ -194,7 +205,14 @@ export function MainCanvasScene({
       {polaroidsE.map((p, i) => (
         <PolaroidCard key={i} x={p.x} y={p.y} width={POLAROID_SMALL_W} height={POLAROID_SMALL_H} frameFilter={FRAME_FILTER}>
           <div style={{ position: "absolute", left: 13.6, top: 15.85, width: 175.03, height: 216.14, overflow: "clip" }}>
-            <img src={photoE} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", filter: PHOTO_GREY }} />
+            {eTopImages[i] ? (
+              <>
+                <img src={eTopImages[i]!} alt="" style={{ position: "absolute", left: 0, top: 0, width: "100%", height: "50%", objectFit: "cover", filter: PHOTO_GREY }} />
+                <img src={eBottomImages[i]!} alt="" style={{ position: "absolute", left: 0, top: "50%", width: "100%", height: "50%", objectFit: "cover", filter: PHOTO_GREY }} />
+              </>
+            ) : (
+              <img src={photoE} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", filter: PHOTO_GREY }} />
+            )}
           </div>
         </PolaroidCard>
       ))}

@@ -11,6 +11,16 @@ import stageSpeaker from "../assets/stop1/stage-speaker.jpg";
 import photoC from "../assets/main-canvas/photo-c.jpg";
 import photoD from "../assets/main-canvas/photo-d.jpg";
 import photoE from "../assets/main-canvas/photo-e.jpg";
+import stop2Hero from "../assets/stop2/hero-cityscape.jpg";
+import stop2SplitTop from "../assets/stop2/split-top-collage.jpg";
+import stop2SplitBottom from "../assets/stop2/split-bottom-campfire.jpg";
+import stop2CTop from "../assets/stop2/c-top-dog.jpg";
+import stop2CBottom from "../assets/stop2/c-bottom-yak.jpg";
+import stop2D from "../assets/stop2/d-flower-hair.jpg";
+import stop2D2Top from "../assets/stop2/d2-top-pink-flowers.jpg";
+import stop2D2Bottom from "../assets/stop2/d2-bottom-white-flowers.jpg";
+import stop2ETop from "../assets/stop2/e-top-sunset-wires.jpg";
+import stop2EBottom from "../assets/stop2/e-bottom-night-street.jpg";
 import paperTexture from "../assets/main-canvas/paper-texture.png";
 import { WORLD_HEIGHT } from "./world";
 
@@ -103,22 +113,27 @@ export const polaroidsLarge: PolaroidLarge[] = [
 export const POLAROID_LARGE_W = 347.41;
 export const POLAROID_LARGE_H = 418.52;
 export { heroInstagram };
+/** stop 2's hero uses its replaced photo; stops 1/3/4 keep the shared default */
+export const heroImages = [heroInstagram, stop2Hero, heroInstagram, heroInstagram];
 
 /** small polaroid split into two stacked half-photos */
 export interface PolaroidSplit {
   x: number;
   y: number;
 }
+/** stop 2 has a 5th split polaroid (Paper node "M6") that doesn't exist at
+ * the other 3 stops — an extra frame sitting just right of its hero. */
 export const polaroidsSplit: PolaroidSplit[] = [
   { x: 881, y: 958 },
   { x: 2633, y: 219 },
   { x: 4277, y: 986 },
   { x: 3027, y: 2259 },
+  { x: 2702, y: 494 },
 ];
 export { splitTop, splitBottom };
-/** stop 1's split polaroid uses the replaced photos; stops 2-4 keep the shared default */
-export const splitTopImages = [hallwayGroup, splitTop, splitTop, splitTop];
-export const splitBottomImages = [stageSpeaker, splitBottom, splitBottom, splitBottom];
+/** stop 1 and stop 2's split polaroids use their replaced photos; stops 3-4 keep the shared default */
+export const splitTopImages = [hallwayGroup, stop2SplitTop, splitTop, splitTop, stop2D2Top];
+export const splitBottomImages = [stageSpeaker, stop2SplitBottom, splitBottom, splitBottom, stop2D2Bottom];
 
 export interface SmallPolaroid {
   x: number;
@@ -127,22 +142,29 @@ export interface SmallPolaroid {
 export const POLAROID_SMALL_W = 202.62;
 export const POLAROID_SMALL_H = 248.11;
 
-/** cropped-tight photo on a letterboxed #DFD9DB mat */
+/** cropped-tight photo on a letterboxed #DFD9DB mat. Stop 2's card (index 1)
+ * is split top/bottom in Paper instead of a single cover photo — see
+ * cTopImages/cBottomImages, checked first before falling back to photoC. */
 export const polaroidsC: SmallPolaroid[] = [
   { x: 237, y: 1109 },
   { x: 1989, y: 370 },
   { x: 3633, y: 1137 },
 ];
 export { photoC };
+export const cTopImages: (string | null)[] = [null, stop2CTop, null];
+export const cBottomImages: (string | null)[] = [null, stop2CBottom, null];
 
-/** cover-fit photo, no mat color visible */
+/** cover-fit photo, no mat color visible. Was 4 entries with stop 2's "M6"
+ * frame miscounted as a single-cover card here — that frame is actually
+ * split (moved to polaroidsSplit above), so this is stop 1/2/3's single-cover
+ * D-cards only; stop 4 genuinely has none in Paper. */
 export const polaroidsD: SmallPolaroid[] = [
   { x: 305, y: 1391 },
-  { x: 2702, y: 494 },
   { x: 2046, y: 713 },
   { x: 3701, y: 1419 },
 ];
 export { photoD };
+export const dImages = [photoD, stop2D, photoD];
 
 export const polaroidsE: SmallPolaroid[] = [
   { x: 639, y: 813 },
@@ -151,6 +173,8 @@ export const polaroidsE: SmallPolaroid[] = [
   { x: 4035, y: 841 },
 ];
 export { photoE };
+export const eTopImages: (string | null)[] = [null, stop2ETop, null, null];
+export const eBottomImages: (string | null)[] = [null, stop2EBottom, null, null];
 
 export interface ContentBlock {
   id: string;
