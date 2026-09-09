@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from "react";
 import { chapters } from "../data/chapters";
-import { TRANSITION_FRAGMENT_INDICES } from "../data/mainCanvasLayout";
+import { stopTitles, TRANSITION_FRAGMENT_INDICES, GUIDED_TRANSITION_S } from "../data/mainCanvasLayout";
 import { typewriterDuration } from "../components/Typewriter";
 import type { FocusTarget } from "./useCanvasEngine";
 
@@ -18,8 +18,14 @@ interface UseGuidedStoryArgs {
 
 const EASE: [number, number, number, number] = [0.45, 0.05, 0.15, 1];
 const STOP_SCALE = 1;
-const PAUSE_MS = 10000;
-const DRAW_MS = 1300;
+// Deliberate hold once a stop's caption finishes typing, before the connector
+// starts drawing to the next stop. Was originally 10s; trimmed to 2.5s after
+// testing read as too long.
+const PAUSE_MS = 2500;
+// The hero photo's own CSS filter transition (see PHOTO_FILTER_TRANSITION in
+// MainCanvasScene) is 0.55s — the caption typing must not start until that
+// visual highlight has actually finished, with zero gap after.
+const HIGHLIGHT_MS = 550;
 const STOP_COUNT = 4;
 
 function cancellableWait(ms: number, cancelledRef: { current: boolean }) {
@@ -35,17 +41,22 @@ function cancellableWait(ms: number, cancelledRef: { current: boolean }) {
   });
 }
 
-/** Drives the guided story: for each stop 01->04, pan+zoom in, highlight the
- * hero into color while its cluster stays grey, type its caption, hold 10s,
- * then draw the connector segment to the next stop before panning there.
- * Ends after stop 04 with no more segments to draw, leaving the user free to
- * pan/zoom manually. Fully interruptible via the same setJourneyStopper wire
- * useCanvasEngine already uses for manual-drag interrupts. */
+/** Drives the guided story. For each stop 01->04, once the camera has arrived:
+ * the stop's heading types in, then (with zero gap) its hero highlights into
+ * color while the rest of its cluster stays grey, then (with zero gap) its
+ * caption types out, then a short pause. The connector segment to the next
+ * stop then draws in at the same time the camera pans there, so both finish
+ * together. Ends after stop 04 with no more segments to draw, leaving the
+ * user free to pan/zoom manually. Fully interruptible via the same
+ * setJourneyStopper wire useCanvasEngine already uses for manual-drag
+ * interrupts. */
 export function useGuidedStory({ focusOn, setJourneyStopper, reduced }: UseGuidedStoryArgs) {
   const [isRunning, setIsRunning] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
   const [activeStopIndex, setActiveStopIndex] = useState<number | null>(null);
+  const [headingStopIndex, setHeadingStopIndex] = useState<number | null>(null);
+  const [headingRevealed, setHeadingRevealed] = useState<boolean[]>(() => Array(STOP_COUNT).fill(false));
   const [captionStopIndex, setCaptionStopIndex] = useState<number | null>(null);
   const [revealedStops, setRevealedStops] = useState<boolean[]>(() => Array(STOP_COUNT).fill(false));
   const [drawingFragment, setDrawingFragment] = useState<number | null>(null);
@@ -76,46 +87,69 @@ export function useGuidedStory({ focusOn, setJourneyStopper, reduced }: UseGuide
           stepRef.current = i;
           const chapter = chapters[i];
 
-          // 1. camera arrives at the stop's framing
-          await focusOn({ x: chapter.position.x, y: chapter.position.y, scale: STOP_SCALE }, 1.4 * durMul, {
-            ease: EASE,
-            settle: true,
-          });
-          if (cancelledRef.current) return;
+          // 1. camera arrival — only a standalone pan for the very first stop
+          // of this run; for every later stop the arrival already happened
+          // concurrently with the previous stop's connector draw (below).
+          if (i === fromStop) {
+            await focusOn({ x: chapter.position.x, y: chapter.position.y, scale: STOP_SCALE }, GUIDED_TRANSITION_S * durMul, {
+              ease: EASE,
+              settle: true,
+            });
+            if (cancelledRef.current) return;
+          }
 
-          // 2. highlight + desaturate — hero pops to color, cluster stays grey
+          // 2. heading typewriter (stop number + title)
+          setHeadingStopIndex(i);
+          setHeadingRevealed((prev) => {
+            const next = [...prev];
+            next[i] = true;
+            return next;
+          });
+          await cancellableWait(typewriterDuration(stopTitles[i].label, reduced), cancelledRef);
+          if (cancelledRef.current) return;
+          setHeadingStopIndex(null);
+
+          // 3. highlight + desaturate — starts the instant the heading is
+          // done, hero pops to color while the rest of the cluster stays grey
           setActiveStopIndex(i);
           setRevealedStops((prev) => {
             const next = [...prev];
             next[i] = true;
             return next;
           });
-          await cancellableWait(300 * waitMul, cancelledRef);
+          await cancellableWait(HIGHLIGHT_MS * durMul, cancelledRef);
           if (cancelledRef.current) return;
 
-          // 3. typewriter caption
+          // 4. typewriter caption — starts the instant the highlight is done
           setCaptionStopIndex(i);
           await cancellableWait(typewriterDuration(chapter.story, reduced), cancelledRef);
           if (cancelledRef.current) return;
 
-          // 4. a deliberate 10s hold once typing finishes
+          // 5. a deliberate pause once typing finishes
           await cancellableWait(PAUSE_MS * waitMul, cancelledRef);
           if (cancelledRef.current) return;
 
-          // 5. draw the connector segment to the next stop (none after 04)
+          // 6. connector segment draws in WHILE the camera pans to the next
+          // stop — simultaneous, same duration, so they land together (none
+          // after stop 04).
           if (i < STOP_COUNT - 1) {
             const fragIdx = TRANSITION_FRAGMENT_INDICES[i];
+            const next = chapters[i + 1];
             setDrawingFragment(fragIdx);
-            await cancellableWait(DRAW_MS * durMul, cancelledRef);
+            await Promise.all([
+              focusOn({ x: next.position.x, y: next.position.y, scale: STOP_SCALE }, GUIDED_TRANSITION_S * durMul, {
+                ease: EASE,
+              }),
+              cancellableWait(GUIDED_TRANSITION_S * durMul * 1000, cancelledRef),
+            ]);
             if (cancelledRef.current) return;
             setDrawnFragments((prev) => {
-              const next = [...prev];
-              next[fragIdx] = true;
-              return next;
+              const next2 = [...prev];
+              next2[fragIdx] = true;
+              return next2;
             });
             setDrawingFragment(null);
           }
-          // 6. loop — next iteration's focusOn pans to the next stop
         }
 
         if (cancelledRef.current) return;
@@ -132,8 +166,10 @@ export function useGuidedStory({ focusOn, setJourneyStopper, reduced }: UseGuide
     stepRef.current = 0;
     setIsFinished(false);
     setRevealedStops(Array(STOP_COUNT).fill(false));
+    setHeadingRevealed(Array(STOP_COUNT).fill(false));
     setDrawnFragments(Array(STOP_COUNT).fill(false));
     setActiveStopIndex(null);
+    setHeadingStopIndex(null);
     setCaptionStopIndex(null);
     run(0);
   }, [run]);
@@ -159,6 +195,8 @@ export function useGuidedStory({ focusOn, setJourneyStopper, reduced }: UseGuide
     isFinished,
     canResume,
     activeStopIndex,
+    headingStopIndex,
+    headingRevealed,
     captionStopIndex,
     revealedStops,
     drawingFragment,

@@ -76,6 +76,8 @@ export function CanvasWorld() {
         >
           <MainCanvasScene
             reduced={prefersReducedMotion}
+            headingStopIndex={guidedStory.headingStopIndex}
+            headingRevealed={guidedStory.headingRevealed}
             revealedStops={guidedStory.revealedStops}
             captionStopIndex={guidedStory.captionStopIndex}
             drawingFragment={guidedStory.drawingFragment}

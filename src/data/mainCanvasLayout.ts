@@ -14,6 +14,11 @@ import paperTexture from "../assets/main-canvas/paper-texture.png";
 export const MAIN_CANVAS_WIDTH = 4794;
 export const MAIN_CANVAS_HEIGHT = 2961;
 
+// Shared between useGuidedStory (camera pan) and MainCanvasScene (connector
+// draw-in) so the two animate in lockstep — the camera must land on the next
+// stop exactly as the dotted line finishes drawing to it.
+export const GUIDED_TRANSITION_S = 1.4;
+
 export { polaroidFrame, paperTexture };
 
 /** the canvas-root background: a portrait texture image rotated -90deg to

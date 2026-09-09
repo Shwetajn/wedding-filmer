@@ -38,3 +38,20 @@
 .main-canvas-journey-cta:hover .main-canvas-journey-cta__arrow {
   transform: translateX(6px);
 }
+
+/* Connector-segment draw-in: a CSS keyframe (not a transition) so the
+   animation always plays from its 0% state on mount, with no race against
+   the element's initial paint. The dotted "1 7" strokeDasharray is set
+   inline and never changes — only strokeDashoffset animates, so dots reveal
+   progressively along the path instead of drawing as a solid line. */
+@keyframes connector-draw {
+  from {
+    stroke-dashoffset: 100;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.connector-drawing {
+  animation: connector-draw var(--connector-draw-duration, 1.4s) linear forwards;
+}

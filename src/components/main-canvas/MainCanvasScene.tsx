@@ -1,4 +1,3 @@
-import { motion } from "motion/react";
 import {
   stopTitles,
   scribbleDoodles,
@@ -29,6 +28,7 @@ import {
   paperTexture,
   MAIN_CANVAS_WIDTH,
   MAIN_CANVAS_HEIGHT,
+  GUIDED_TRANSITION_S,
 } from "../../data/mainCanvasLayout";
 import scribbleDoodleSrc from "../../assets/main-canvas/scribble-doodle.png";
 import handCutoutSrc from "../../assets/main-canvas/hand-cutout.png";
@@ -41,10 +41,13 @@ const FRAME_FILTER = "brightness(92%) contrast(77%) saturate(25%)";
 const PHOTO_COLOR = "grayscale(0) saturate(1.05) contrast(1.02)";
 const PHOTO_GREY = "grayscale(1) saturate(0.15) contrast(0.98)";
 const PHOTO_FILTER_TRANSITION = "filter 0.55s var(--ease-editorial)";
-const DRAW_DURATION_S = 1.3;
 
 interface MainCanvasSceneProps {
   reduced: boolean;
+  /** stop index whose heading (number+title) is visible; null = none typing right now */
+  headingStopIndex: number | null;
+  /** stop indices whose heading has started (typing live or already finished) */
+  headingRevealed: boolean[];
   /** stop index (0-3) whose hero is in full color and other stops stay grey; null = none revealed yet */
   revealedStops: boolean[];
   /** stop index currently typing its caption; already-revealed stops show their full caption statically */
@@ -63,6 +66,8 @@ interface MainCanvasSceneProps {
  * per-element recomputation. */
 export function MainCanvasScene({
   reduced,
+  headingStopIndex,
+  headingRevealed,
   revealedStops,
   captionStopIndex,
   drawingFragment,
@@ -86,27 +91,29 @@ export function MainCanvasScene({
         }}
       />
 
-      {stopTitles.map((t) => (
-        <div key={t.id} style={{ position: "absolute", left: t.x, top: t.y, width: 191.25, display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 11.19 }}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              width: 41.96,
-              paddingBottom: 4.48,
-              borderBottom: "1.67848px solid #1A1A1A",
-            }}
-          >
-            <div style={{ color: "#1A1A1A", fontFamily: '"Satoshi", system-ui, sans-serif', fontWeight: 700, fontSize: 27, lineHeight: "34.8754px" }}>
-              {t.index}
+      {stopTitles.map((t, i) =>
+        headingRevealed[i] ? (
+          <div key={t.id} style={{ position: "absolute", left: t.x, top: t.y, width: 191.25, display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 11.19 }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                width: 41.96,
+                paddingBottom: 4.48,
+                borderBottom: "1.67848px solid #1A1A1A",
+              }}
+            >
+              <div style={{ color: "#1A1A1A", fontFamily: '"Satoshi", system-ui, sans-serif', fontWeight: 700, fontSize: 27, lineHeight: "34.8754px" }}>
+                {t.index}
+              </div>
+            </div>
+            <div style={{ color: "#900000", fontFamily: '"Satoshi", system-ui, sans-serif', fontWeight: 500, fontSize: 27, lineHeight: "34.8754px", width: 191.25 }}>
+              {i === headingStopIndex ? <Typewriter text={t.label} reduced={reduced} /> : t.label}
             </div>
           </div>
-          <div style={{ color: "#900000", fontFamily: '"Satoshi", system-ui, sans-serif', fontWeight: 500, fontSize: 27, lineHeight: "34.8754px", width: 191.25 }}>
-            {t.label}
-          </div>
-        </div>
-      ))}
+        ) : null
+      )}
 
       {scribbleDoodles.map((d, i) => (
         <img
@@ -300,6 +307,12 @@ export function MainCanvasScene({
 
         if (!drawn && !drawingNow) return null;
 
+        // pathLength=100 normalizes dash math to a fixed unit length
+        // regardless of this fragment's actual geometry, so the same "1 7"
+        // dotted pattern stays constant the whole time — only
+        // strokeDashoffset animates (100 -> 0), revealing dots progressively
+        // along the path. This must never render as a solid stroke that
+        // later swaps to dotted.
         return (
           <svg
             key={i}
@@ -315,29 +328,21 @@ export function MainCanvasScene({
               transform: f.rotate ? `rotate(${f.rotate}deg)` : undefined,
             }}
           >
-            {drawn ? (
-              <path
-                d={f.d}
-                fill="none"
-                stroke="#161412"
-                strokeWidth={2.5}
-                strokeLinecap="round"
-                strokeDasharray="1 7"
-                opacity={0.78}
-              />
-            ) : (
-              <motion.path
-                d={f.d}
-                fill="none"
-                stroke="#161412"
-                strokeWidth={2.5}
-                strokeLinecap="round"
-                opacity={0.78}
-                initial={{ pathLength: 0 }}
-                animate={{ pathLength: 1 }}
-                transition={{ duration: reduced ? 0.2 : DRAW_DURATION_S, ease: "linear" }}
-              />
-            )}
+            <path
+              d={f.d}
+              pathLength={100}
+              fill="none"
+              stroke="#161412"
+              strokeWidth={2.5}
+              strokeLinecap="round"
+              opacity={0.78}
+              className={drawingNow ? "connector-drawing" : undefined}
+              style={{
+                strokeDasharray: "1 7",
+                strokeDashoffset: drawn ? 0 : 100,
+                ...(drawingNow ? { "--connector-draw-duration": `${reduced ? 0.2 : GUIDED_TRANSITION_S}s` } : {}),
+              } as React.CSSProperties}
+            />
           </svg>
         );
       })}
