@@ -6,6 +6,7 @@ import {
   POLAROID_LARGE_W,
   POLAROID_LARGE_H,
   heroImages,
+  heroFit,
   polaroidsSplit,
   splitTopImages,
   splitBottomImages,
@@ -161,7 +162,7 @@ export function MainCanvasScene({
               style={{
                 width: "100%",
                 height: "100%",
-                objectFit: "contain",
+                objectFit: heroFit[i],
                 filter: revealedStops[i] ? PHOTO_COLOR : PHOTO_GREY,
                 transition: PHOTO_FILTER_TRANSITION,
               }}

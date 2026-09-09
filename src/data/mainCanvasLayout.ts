@@ -115,6 +115,12 @@ export const POLAROID_LARGE_H = 418.52;
 export { heroInstagram };
 /** stop 2's hero uses its replaced photo; stops 1/3/4 keep the shared default */
 export const heroImages = [heroInstagram, stop2Hero, heroInstagram, heroInstagram];
+/** Paper renders each hero with a plain CSS background-size, read per node
+ * via get_computed_styles rather than assumed — stop 1's is "contain" (the
+ * shared placeholder's own aspect ratio leaves it borderless either way),
+ * but stop 2's real photo is noticeably narrower than the frame and is
+ * explicitly "cover" in Paper, so it must crop full-bleed, not letterbox. */
+export const heroFit: ("contain" | "cover")[] = ["contain", "cover", "contain", "contain"];
 
 /** small polaroid split into two stacked half-photos */
 export interface PolaroidSplit {
