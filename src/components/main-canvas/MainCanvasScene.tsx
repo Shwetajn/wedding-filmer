@@ -176,13 +176,13 @@ export function MainCanvasScene({
 
       {polaroidsSplit.map((p, i) => (
         <PolaroidCard key={i} x={p.x} y={p.y} width={POLAROID_SMALL_W} height={POLAROID_SMALL_H} frameFilter={FRAME_FILTER}>
-          <div style={{ position: "absolute", left: 13.63, top: 15.81, width: 174.98, height: 220.16, overflow: "clip" }}>
+          <div className="main-canvas-photo-hover" style={{ position: "absolute", left: 13.63, top: 15.81, width: 174.98, height: 220.16, overflow: "clip" }}>
             {splitSingleImages[i] ? (
-              <img src={splitSingleImages[i]!} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", filter: PHOTO_GREY }} />
+              <img src={splitSingleImages[i]!} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
             ) : (
               <>
-                <img src={splitTopImages[i]} alt="" style={{ position: "absolute", left: 0, top: 0, width: "100%", height: "50%", objectFit: "cover", filter: PHOTO_GREY }} />
-                <img src={splitBottomImages[i]} alt="" style={{ position: "absolute", left: 0, top: "50%", width: "100%", height: "50%", objectFit: "cover", filter: PHOTO_GREY }} />
+                <img src={splitTopImages[i]} alt="" style={{ position: "absolute", left: 0, top: 0, width: "100%", height: "50%", objectFit: "cover" }} />
+                <img src={splitBottomImages[i]} alt="" style={{ position: "absolute", left: 0, top: "50%", width: "100%", height: "50%", objectFit: "cover" }} />
               </>
             )}
           </div>
@@ -191,14 +191,14 @@ export function MainCanvasScene({
 
       {polaroidsC.map((p, i) => (
         <PolaroidCard key={i} x={p.x} y={p.y} width={POLAROID_SMALL_W} height={POLAROID_SMALL_H} frameFilter={FRAME_FILTER}>
-          <div style={{ position: "absolute", left: 13.57, top: 15.8, width: 175.26, height: 216.24, background: "#DFD9DB", overflow: "clip" }}>
+          <div className="main-canvas-photo-hover" style={{ position: "absolute", left: 13.57, top: 15.8, width: 175.26, height: 216.24, background: "#DFD9DB", overflow: "clip" }}>
             {cTopImages[i] ? (
               <>
-                <img src={cTopImages[i]!} alt="" style={{ position: "absolute", left: 0, top: 0, width: "100%", height: "50%", objectFit: "cover", filter: PHOTO_GREY }} />
-                <img src={cBottomImages[i]!} alt="" style={{ position: "absolute", left: 0, top: "50%", width: "100%", height: "50%", objectFit: "cover", filter: PHOTO_GREY }} />
+                <img src={cTopImages[i]!} alt="" style={{ position: "absolute", left: 0, top: 0, width: "100%", height: "50%", objectFit: "cover" }} />
+                <img src={cBottomImages[i]!} alt="" style={{ position: "absolute", left: 0, top: "50%", width: "100%", height: "50%", objectFit: "cover" }} />
               </>
             ) : (
-              <img src={cImages[i]} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", filter: PHOTO_GREY }} />
+              <img src={cImages[i]} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
             )}
           </div>
         </PolaroidCard>
@@ -206,14 +206,14 @@ export function MainCanvasScene({
 
       {polaroidsD.map((p, i) => (
         <PolaroidCard key={i} x={p.x} y={p.y} width={POLAROID_SMALL_W} height={POLAROID_SMALL_H} frameFilter={FRAME_FILTER}>
-          <div style={{ position: "absolute", left: 13.6, top: 15.85, width: 175.03, height: 216.14, overflow: "clip" }}>
+          <div className="main-canvas-photo-hover" style={{ position: "absolute", left: 13.6, top: 15.85, width: 175.03, height: 216.14, overflow: "clip" }}>
             {dTopImages[i] ? (
               <>
-                <img src={dTopImages[i]!} alt="" style={{ position: "absolute", left: 0, top: 0, width: "100%", height: "50%", objectFit: "cover", filter: PHOTO_GREY }} />
-                <img src={dBottomImages[i]!} alt="" style={{ position: "absolute", left: 0, top: "50%", width: "100%", height: "50%", objectFit: "cover", filter: PHOTO_GREY }} />
+                <img src={dTopImages[i]!} alt="" style={{ position: "absolute", left: 0, top: 0, width: "100%", height: "50%", objectFit: "cover" }} />
+                <img src={dBottomImages[i]!} alt="" style={{ position: "absolute", left: 0, top: "50%", width: "100%", height: "50%", objectFit: "cover" }} />
               </>
             ) : (
-              <img src={dImages[i]} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", filter: PHOTO_GREY }} />
+              <img src={dImages[i]} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
             )}
           </div>
         </PolaroidCard>
@@ -221,14 +221,14 @@ export function MainCanvasScene({
 
       {polaroidsE.map((p, i) => (
         <PolaroidCard key={i} x={p.x} y={p.y} width={POLAROID_SMALL_W} height={POLAROID_SMALL_H} frameFilter={FRAME_FILTER}>
-          <div style={{ position: "absolute", left: 13.6, top: 15.85, width: 175.03, height: 216.14, overflow: "clip" }}>
+          <div className="main-canvas-photo-hover" style={{ position: "absolute", left: 13.6, top: 15.85, width: 175.03, height: 216.14, overflow: "clip" }}>
             {eTopImages[i] ? (
               <>
-                <img src={eTopImages[i]!} alt="" style={{ position: "absolute", left: 0, top: 0, width: "100%", height: "50%", objectFit: "cover", filter: PHOTO_GREY }} />
-                <img src={eBottomImages[i]!} alt="" style={{ position: "absolute", left: 0, top: "50%", width: "100%", height: "50%", objectFit: "cover", filter: PHOTO_GREY }} />
+                <img src={eTopImages[i]!} alt="" style={{ position: "absolute", left: 0, top: 0, width: "100%", height: "50%", objectFit: "cover" }} />
+                <img src={eBottomImages[i]!} alt="" style={{ position: "absolute", left: 0, top: "50%", width: "100%", height: "50%", objectFit: "cover" }} />
               </>
             ) : (
-              <img src={eImages[i]} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", filter: PHOTO_GREY }} />
+              <img src={eImages[i]} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
             )}
           </div>
         </PolaroidCard>

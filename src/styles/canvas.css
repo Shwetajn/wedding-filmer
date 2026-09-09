@@ -17,6 +17,18 @@
   will-change: transform;
 }
 
+/* Non-hero polaroid frames (split/C/D/E) — grey by default, full color on
+   hover. The hero polaroids are excluded on purpose: their color state is
+   driven by the guided story's reveal sequence instead (see revealedStops
+   in MainCanvasScene), not by hover. */
+.main-canvas-photo-hover img {
+  filter: grayscale(1) saturate(0.15) contrast(0.98);
+  transition: filter 0.55s var(--ease-editorial);
+}
+.main-canvas-photo-hover:hover img {
+  filter: grayscale(0) saturate(1.05) contrast(1.02);
+}
+
 .canvas-world__photo {
   position: absolute;
   inset: 0;

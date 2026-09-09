@@ -13,9 +13,9 @@ export function JourneyPill({ mode, onClick }: JourneyPillProps) {
         type="button"
         className="journey-pill"
         onClick={onClick}
-        initial={{ opacity: 0, x: 16, y: "-50%" }}
-        animate={{ opacity: 1, x: 0, y: "-50%" }}
-        exit={{ opacity: 0, x: 16, y: "-50%" }}
+        initial={{ opacity: 0, x: 16 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: 16 }}
         transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
       >
         {mode === "end" ? "End journey" : "Continue journey"}

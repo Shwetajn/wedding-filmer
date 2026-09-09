@@ -39,8 +39,8 @@
 
 .journey-pill {
   position: fixed;
-  top: 50%;
-  right: 16px;
+  bottom: 48px;
+  right: 48px;
   z-index: 40;
   background: #ffffff;
   color: var(--accent-red);
