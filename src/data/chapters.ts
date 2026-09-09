@@ -85,28 +85,6 @@ export const chapters: ChapterData[] = [
     photos: [],
     story: "No studio. No elaborate setup. Just an iPhone, available light and a day worth remembering.",
   },
-  {
-    id: "chapter-05",
-    index: "05",
-    title: "Where I'm Going",
-    subtitle: "",
-    // repositioned below the Paper artboard (2961px tall) — this closing
-    // chapter isn't part of the Main Canvas design, so it lives just past it
-    position: { x: 2500, y: 3495 },
-    quiet: true,
-    hero: {
-      id: "c5-hero",
-      variant: "horizon",
-      frame: "plain",
-      rotation: 0,
-      width: 300,
-      height: 390,
-      x: 2350,
-      y: 3300,
-    },
-    photos: [],
-    story: "I've been photographing things for a while.\n\nNow I want to learn how to tell those stories differently.",
-  },
 ];
 
 export const originQuote = {

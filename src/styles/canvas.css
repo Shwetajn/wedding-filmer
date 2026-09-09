@@ -311,57 +311,6 @@
   opacity: 1;
 }
 
-.final-chapter__line {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: 26px;
-  color: var(--ink);
-  margin: 0 0 14px;
-  line-height: 1.4;
-}
-.final-chapter__line--emphasis {
-  color: var(--muted-blue);
-}
-
-.final-chapter__signature {
-  margin-top: 34px;
-  border-top: 1px solid var(--paper-edge);
-  padding-top: 20px;
-}
-.final-chapter__signature h2 {
-  font-family: var(--font-display);
-  font-size: 24px;
-  font-weight: 400;
-  margin: 0 0 8px;
-  color: var(--ink);
-}
-.final-chapter__signature p {
-  font-family: var(--font-body);
-  font-size: 13px;
-  color: var(--charcoal-soft);
-  line-height: 1.6;
-  margin: 0;
-}
-
-.contact-links {
-  display: flex;
-  gap: 20px;
-  margin-top: 22px;
-}
-.contact-links__item {
-  font-family: var(--font-body);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--charcoal-soft);
-  text-decoration: none;
-  border-bottom: 1px solid transparent;
-}
-.contact-links__item:hover {
-  color: var(--accent-blue);
-  border-bottom-color: var(--accent-blue);
-}
-
 @media (max-width: 720px) {
   .chapter-label__title {
     font-size: 24px;

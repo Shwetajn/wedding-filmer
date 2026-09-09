@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
-import { chapters } from "../data/chapters";
 import { WORLD_HEIGHT, WORLD_WIDTH } from "../data/world";
 import { headline } from "../data/mainCanvasLayout";
 import { useCanvasEngine } from "../hooks/useCanvasEngine";
 import { useGuidedStory } from "../hooks/useGuidedStory";
-import { FinalChapter } from "./FinalChapter";
 import { CanvasControls } from "./CanvasControls";
 import { JourneyPill } from "./JourneyPill";
 import { MainCanvasScene } from "./main-canvas/MainCanvasScene";
@@ -87,7 +85,6 @@ export function CanvasWorld() {
             aboutTyping={guidedStory.aboutTyping}
             onFollowJourney={() => guidedStory.start()}
           />
-          <FinalChapter chapter={chapters[4]} />
         </motion.div>
       </motion.div>
 
