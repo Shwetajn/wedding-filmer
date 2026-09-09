@@ -1,3 +1,50 @@
+/* Self-hosted (Satoshi isn't on Google Fonts) — sourced from Fontshare.
+   This is the site's font system going forward: Satoshi for everything
+   except Caveat (hand annotations) and Bebas Neue (the Main Canvas
+   headline), per the "moving forward this stays same" decision. */
+@font-face {
+  font-family: "Satoshi";
+  src: url("../assets/fonts/satoshi/Satoshi-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Satoshi";
+  src: url("../assets/fonts/satoshi/Satoshi-Italic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Satoshi";
+  src: url("../assets/fonts/satoshi/Satoshi-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Satoshi";
+  src: url("../assets/fonts/satoshi/Satoshi-MediumItalic.woff2") format("woff2");
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Satoshi";
+  src: url("../assets/fonts/satoshi/Satoshi-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Satoshi";
+  src: url("../assets/fonts/satoshi/Satoshi-BoldItalic.woff2") format("woff2");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
 :root {
   --paper: #efe9dc;
   --paper-deep: #e5ddcb;
@@ -12,13 +59,13 @@
   --accent-red: #8a3229;
   --grain-opacity: 0.035;
 
-  --font-display: "Instrument Serif", "Cormorant Garamond", serif;
-  --font-huge: "Bebas Neue", "Anton", "Manrope", sans-serif;
-  --font-satoshi: "Satoshi", "Manrope", sans-serif;
-  --font-serif: "Cormorant Garamond", serif;
-  --font-body: "Manrope", "Inter", sans-serif;
+  --font-display: "Satoshi", sans-serif;
+  --font-huge: "Bebas Neue", "Satoshi", sans-serif;
+  --font-satoshi: "Satoshi", sans-serif;
+  --font-serif: "Satoshi", sans-serif;
+  --font-body: "Satoshi", sans-serif;
   --font-hand: "Caveat", cursive;
-  --font-mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, monospace;
+  --font-mono: "Satoshi", sans-serif;
 
   /* small, soft, diffused — objects resting on paper, not hovering over it */
   --shadow-photo: 0 1px 1px rgba(28, 26, 23, 0.1), 0 3px 8px -3px rgba(28, 26, 23, 0.22);
