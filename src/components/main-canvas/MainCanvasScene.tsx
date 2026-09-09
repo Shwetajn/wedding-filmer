@@ -10,6 +10,7 @@ import {
   polaroidsSplit,
   splitTopImages,
   splitBottomImages,
+  splitSingleImages,
   polaroidsC,
   cImages,
   cTopImages,
@@ -19,7 +20,7 @@ import {
   dTopImages,
   dBottomImages,
   polaroidsE,
-  photoE,
+  eImages,
   eTopImages,
   eBottomImages,
   POLAROID_SMALL_W,
@@ -176,8 +177,14 @@ export function MainCanvasScene({
       {polaroidsSplit.map((p, i) => (
         <PolaroidCard key={i} x={p.x} y={p.y} width={POLAROID_SMALL_W} height={POLAROID_SMALL_H} frameFilter={FRAME_FILTER}>
           <div style={{ position: "absolute", left: 13.63, top: 15.81, width: 174.98, height: 220.16, overflow: "clip" }}>
-            <img src={splitTopImages[i]} alt="" style={{ position: "absolute", left: 0, top: 0, width: "100%", height: "50%", objectFit: "cover", filter: PHOTO_GREY }} />
-            <img src={splitBottomImages[i]} alt="" style={{ position: "absolute", left: 0, top: "50%", width: "100%", height: "50%", objectFit: "cover", filter: PHOTO_GREY }} />
+            {splitSingleImages[i] ? (
+              <img src={splitSingleImages[i]!} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", filter: PHOTO_GREY }} />
+            ) : (
+              <>
+                <img src={splitTopImages[i]} alt="" style={{ position: "absolute", left: 0, top: 0, width: "100%", height: "50%", objectFit: "cover", filter: PHOTO_GREY }} />
+                <img src={splitBottomImages[i]} alt="" style={{ position: "absolute", left: 0, top: "50%", width: "100%", height: "50%", objectFit: "cover", filter: PHOTO_GREY }} />
+              </>
+            )}
           </div>
         </PolaroidCard>
       ))}
@@ -221,7 +228,7 @@ export function MainCanvasScene({
                 <img src={eBottomImages[i]!} alt="" style={{ position: "absolute", left: 0, top: "50%", width: "100%", height: "50%", objectFit: "cover", filter: PHOTO_GREY }} />
               </>
             ) : (
-              <img src={photoE} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", filter: PHOTO_GREY }} />
+              <img src={eImages[i]} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", filter: PHOTO_GREY }} />
             )}
           </div>
         </PolaroidCard>

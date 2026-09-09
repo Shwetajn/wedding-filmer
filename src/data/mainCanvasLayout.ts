@@ -29,6 +29,9 @@ import stop3DTop from "../assets/stop3/d-top.jpg";
 import stop3DBottom from "../assets/stop3/d-bottom.jpg";
 import stop3ETop from "../assets/stop3/e-top.jpg";
 import stop3EBottom from "../assets/stop3/e-bottom.jpg";
+import stop4Hero from "../assets/stop4/hero-instagram@2x.jpg";
+import stop4Split from "../assets/stop4/b@2x.jpg";
+import stop4E from "../assets/stop4/top@2x.jpg";
 import paperTexture from "../assets/main-canvas/paper-texture.png";
 import { WORLD_HEIGHT } from "./world";
 
@@ -121,9 +124,9 @@ export const polaroidsLarge: PolaroidLarge[] = [
 export const POLAROID_LARGE_W = 347.41;
 export const POLAROID_LARGE_H = 418.52;
 export { heroInstagram };
-/** stop 2 and stop 3's heroes use their replaced photos (stop 3's is an
- * animated GIF); stop 1/4 keep the shared default */
-export const heroImages = [heroInstagram, stop2Hero, stop3Hero, heroInstagram];
+/** stops 2, 3, and 4's heroes use their replaced photos (stop 3's is an
+ * animated GIF); stop 1 keeps the shared default */
+export const heroImages = [heroInstagram, stop2Hero, stop3Hero, stop4Hero];
 /** Paper renders each hero with a plain CSS background-size, read per node
  * via get_computed_styles rather than assumed — stop 1's is "contain" (the
  * shared placeholder's own aspect ratio leaves it borderless either way),
@@ -149,6 +152,10 @@ export { splitTop, splitBottom };
 /** stop 1, 2, and 3's split polaroids use their replaced photos; stop 4 keeps the shared default */
 export const splitTopImages = [hallwayGroup, stop2SplitTop, stop3SplitTop, splitTop, stop2D2Top];
 export const splitBottomImages = [stageSpeaker, stop2SplitBottom, stop3SplitBottom, splitBottom, stop2D2Bottom];
+/** stop 4's card (index 3) is one continuous photo (decorative hearts baked
+ * in), not two stacked halves — checked before splitTopImages/BottomImages
+ * above, which render the normal top/bottom split. */
+export const splitSingleImages: (string | null)[] = [null, null, null, stop4Split, null];
 
 export interface SmallPolaroid {
   x: number;
@@ -199,6 +206,10 @@ export { photoE };
  * not visual stop order) — index 3 is stop 3's card */
 export const eTopImages: (string | null)[] = [null, stop2ETop, null, stop3ETop];
 export const eBottomImages: (string | null)[] = [null, stop2EBottom, null, stop3EBottom];
+/** stop 4's card (index 2) is its own single replaced photo (the maternity
+ * shot, face already masked in the source file) — checked before eTopImages
+ * above, falls back to the shared photoE otherwise. */
+export const eImages = [photoE, photoE, stop4E, photoE];
 
 export interface ContentBlock {
   id: string;
